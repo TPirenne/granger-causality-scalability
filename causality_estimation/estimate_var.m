@@ -11,7 +11,6 @@ function [params, error_cov, info] = estimate_var(data, order, prior, info)
 %       - "LAPSBL": Laplace-Sparse Bayesian Learning
 %       - "OLS": Ordinary Least Square Regression
 %       - "LWR": Levison Wiggins Robinson algorithm
-%       - "LAPPS": NOT WORKING !
 %       - "LASSO": Least Absolute Shrinkage and Selection Operator (regr.)
 % =========================================================================
 % MIT License                                                             %
@@ -48,9 +47,6 @@ function [params, error_cov, info] = estimate_var(data, order, prior, info)
 
     elseif strcmpi(info.est_method, "LWR")
         [params, error_cov] = lwr(data, order);
-
-    elseif strcmpi(info.est_method, "LAPPS")
-        [params, error_cov] = lapps(data, order);
 
     elseif strcmpi(info.est_method, "LASSO")
         [params, error_cov] = lasso_reg(data, order);
