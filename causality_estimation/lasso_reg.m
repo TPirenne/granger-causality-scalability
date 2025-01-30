@@ -5,6 +5,10 @@ function [params, error_cov] = lasso_reg(data, order)
 %   The estimation is done via the matlab implementation of the LASSO
 %   regression. Lambda values are (by default) assigned as a geometric
 %   sequence.
+%
+% [1] Tibshirani, Robert. “Regression Shrinkage and Selection via the 
+% Lasso.” Journal of the Royal Statistical Society. Series B
+% (Methodological), vol. 58, no. 1, pp. 267–88, (1996).
 % =========================================================================
 % MIT License                                                             %
 %                                                                         %
