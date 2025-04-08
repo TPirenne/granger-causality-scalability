@@ -122,7 +122,7 @@ NOW = string(datetime('now'), 'yyyyMMddHHmm');
 exp6 = struct();
 exp6.run = true;
 exp6.ns = [50:50:1000, 1100:100:10000, 11000:1000:20000];
-exp6.nc = [5:5:50, 60:10:200, 220:20:420];
+exp6.nc = [5:5:50, 60:10:200, 220:20:500];
 exp6.no = 10;
 exp6.exn = 0.0;
 exp6.timestamp = NOW;
@@ -221,7 +221,7 @@ experiments(struct("run", false), struct("run", false), exp3, struct("run", fals
 %%%%%%%%
 %  nc  %
 %%%%%%%%
-Get current timestamp
+% Get current timestamp
 NOW_nc = string(datetime('now'), 'yyyyMMddHHmm');
 exp4 = struct();
 exp4.run = true;
@@ -408,7 +408,7 @@ exp1.timestamp = NOW;
 experiments(exp1);
 
 %% Fig.5 (202408281750) - coupling strength detectability threshold
-Trials
+% Trials
 nt = 100;
 
 % Get current timestamp
@@ -447,3 +447,123 @@ exp2.nt = nt;
 exp2.timestamp = NOW;
 
 experiments(struct("run", false), exp2);
+
+
+%% LASSO %%
+% Fig.2a (202409051456) - ns x nc
+exp1 = struct();
+exp1.run = true;
+exp1.mvar_est_methods = {"lasso"};
+exp1.caus_est_methods = {"mvgc"};
+exp1.ns = [100:100:1000, 1500:500:10000];
+exp1.nc = [5:5:50];
+exp1.exn = [0.0, 0.50];
+exp1.no = [10];
+exp1.nt = 5;
+exp1.cutoff_time_trial = 1200;
+exp1.skip_cut_of = ["nc"];
+exp1.timestamp = "202409051456";
+
+experiments(exp1);
+% 
+% % Fig.2b (202412222218) - feasibility area
+% exp6 = struct();
+% exp6.run = true;
+% exp6.ns = [50:50:1000, 1100:100:10000, 11000:1000:20000];
+% exp6.nc = [5:5:50, 60:10:200, 220:20:500];
+% exp6.no = 10;
+% exp6.exn = 0.0;
+% exp6.timestamp = "202412222218";
+% exp6.mvar_est_methods = {"lasso"};
+% exp6.caus_est_methods = {"mvgc"};
+% 
+% experiments(struct("run", false), struct("run", false), struct("run", false), struct("run", false), struct("run", false), exp6);
+% 
+% % Fig.2c (202412121736) - feasibility threshold
+% exp5 = struct();
+% exp5.run = true;
+% exp5.mvar_est_methods = {"lasso"};
+% exp5.caus_est_methods = {"mvgc"};
+% exp5.ns = [50:50:1000, 1100:100:10000, 11000:1000:50000];
+% exp5.nc = [5:5:50,60:10:200, 300:50:1000];
+% exp5.timestamp = "202412121736";
+% 
+% experiments(struct("run", false), struct("run", false), struct("run", false), struct("run", false), exp5);
+% 
+% % Fig.3abc (202411-241722,-260638,-282215) - ns, nc, no
+% % Get current timestamp
+% NOW_ns = string(datetime('now'), 'yyyyMMddHHmm');
+% exp3 = struct();
+% exp3.run = true;
+% exp3.exn = [0.0, 0.50];
+% exp3.no = [10];
+% exp3.nt = 1;
+% exp3.cutoff_time_trial = 1200;
+% exp3.timestamp = "202411241722";
+% exp3.skip_cut_of = ["nc", "no"];
+% exp3.mvar_est_methods = {"lasso"};
+% exp3.caus_est_methods = {"mvgc"};
+% exp3.ns = [100:100:1000, 1500:500:20000];
+% exp3.nc = [10, 30];
+% 
+% experiments(struct("run", false), struct("run", false), exp3, struct("run", false));
+% 
+% exp4 = struct();
+% exp4.run = true;
+% exp4.exn = [0.0, 0.50];
+% exp4.no = [10];
+% exp4.nt = 1;
+% exp4.cutoff_time_trial = 1200;
+% exp4.timestamp = "202411260638";
+% exp4.skip_cut_of = ["ns", "no"];
+% exp4.mvar_est_methods = {"lasso"};
+% exp4.caus_est_methods = {"mvgc"};
+% exp4.ns = [1000, 2000, 10000];
+% exp4.nc = [5:5:400];
+% 
+% experiments(struct("run", false), struct("run", false), struct("run", false), exp4);
+% 
+% exp1 = struct();
+% exp1.run = true;
+% exp1.exn = [0.0, 0.50];
+% exp1.nt = 1;
+% exp1.cutoff_time_trial = 1200;
+% exp1.timestamp = "202411282215";
+% exp1.skip_cut_of = ["nc", "ns"];
+% exp1.mvar_est_methods = {"lasso"};
+% exp1.caus_est_methods = {"mvgc"};
+% exp1.ns = [1000, 10000];
+% exp1.nc = [10, 30];
+% exp1.no = [5:1:15, 16:2:30, 35:5:100, 110:10:200];
+% 
+% experiments(exp1);
+% 
+% % Fig.4 (202411191733) - ns x nc x no
+% exp1 = struct();
+% exp1.run = true;
+% exp1.mvar_est_methods = {"lasso"};
+% exp1.caus_est_methods = {"mvgc"};
+% exp1.ns = [100, 200, 500, 2000];
+% exp1.nc = [10, 20, 30, 50];
+% exp1.exn = [0.0, 0.50];
+% exp1.no = [5, 10, 20, 50];
+% exp1.nt = 1;
+% exp1.cutoff_time_trial = 1200;
+% exp1.skip_cut_of = ["nc", "ns", "no"];
+% exp1.timestamp = "202411191733";
+% 
+% experiments(exp1);
+% 
+% % Fig.5 (202408281750) - coupling strength detectability threshold
+% exp2 = struct();
+% exp2.run = true;
+% exp2.mvar_est_methods = {"lasso"};
+% exp2.caus_est_methods = {"mvgc"};
+% exp2.ns = [5000];
+% exp2.nc = [20];
+% exp2.exn = [0.0, 0.25, 0.50, 0.75];
+% exp2.no = [10];
+% exp2.nt = 100;
+% exp2.timestamp = "202408281750";
+% 
+% experiments(struct("run", false), exp2);

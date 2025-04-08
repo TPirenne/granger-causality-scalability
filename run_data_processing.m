@@ -84,8 +84,9 @@ for eid = 1 : length(draft{mid}.exn)
 
         % title(methods{mid});
         xlabel("ns");
-        ylabel(methods{mid}, "FontSize", 14);
+        % ylabel(methods{mid});
         % ylabel("f1 score");
+        ylabel({sprintf("\\fontsize{14}%s", methods{mid}),'\fontsize{10} f1-score'});
 
         for cid = 1 : length(draft{mid}.nc)
             color_shades = get_colors(colors{mid}, []);
@@ -118,11 +119,11 @@ end
 timestr = "202412222218";
 methods = {"mvgc-lwr", "mvgc-ols", "mvgc-lasso", "mvgc-sbl", "mvgc-lapsbl", "pdc-lwr", "pdc-ols"};
 colors = {"red", "purple", "blue", "yellow", "orange", "green", "blueGrey"};
-plotspan = {[1,2,3,4], [5,6,7,8], 9, 10, 11, 12, 13};
+plotspan = {1:1:48, 52:1:89, 93:1:96, 100:1:103, 107:1:109, 113:1:117, 121:1:125};
 
 % Save parameters
 fig_width = 600;
-fig_height = 1200;
+fig_height = 1500;
 SAVE = true;
 save_path = sprintf('data/results/F02b');
 if (SAVE && ~exist(save_path, 'dir')), mkdir(save_path); end
@@ -166,7 +167,7 @@ for eid = 1 : length(draft{1}.exn)
 
     for mid = 1 : length(methods)
         % Open subfig
-        subplot(13, 1, plotspan{mid});
+        subplot(125, 1, plotspan{mid});
         % subid = eid + (mid - 1) * length(draft{1}.exn);
         % subplot(length(methods), length(draft{1}.exn), subid);
 
@@ -221,8 +222,7 @@ for eid = 1 : length(draft{1}.exn)
         failed_mask = isnan(perf_mask) & ~overtime_mask;
         perf_mask(failed_mask) = -1;
 
-        %%% Fetch border values for feasibility %%% ---> Failed mask !! And
-        %%% figure out how to get last true instead of first
+        %%% Fetch border values for feasibility %%%
         % Horizontally
         draft{mid}.feasibility_data{eid} = [];
         for fcid = 1 : size(failed_mask, 1)
@@ -280,6 +280,10 @@ for eid = 1 : length(draft{1}.exn)
             draft{mid}.feasibility_border{eid} = fitlm(x, y);
         end
 
+        % Crop all NaN lines
+        perf_mask(all(isnan(perf_mask), 2), :) = [];
+        draft{mid}.nc = draft{mid}.nc(1:size(perf_mask, 1));
+
         %%% For display, spread values to fit continuous spectrum %%%
         % 1 - original scope ; 2 - extended scope
         nc1 = draft{mid}.nc;
@@ -305,34 +309,29 @@ for eid = 1 : length(draft{1}.exn)
             end
         end
 
-        % Crop ns at 12000, nc of low performers at 90
+        % Crop ns at 12000
         ns2 = ns2(1:find(ns2 == 10000));
         perf_mask2 = perf_mask2(:, 1:length(ns2));
-        
-        if (mid > 2)
-            nc2 = nc2(1:find(nc2 == 90));
-            perf_mask2 = perf_mask2(1:length(nc2), :);
-        end
 
         %%% Plot %%%
         hx = ns2;
         hy = fliplr(nc2);
         h = heatmap(hx, hy, double(flipud(perf_mask2)), "CellLabelColor", "none");
         if mid == length(methods), h.XLabel = "ns"; else, h.XLabel = ""; end
-        h.YLabel = methods{mid};
-        h.FontSize = 8;
+        if mid < 3, h.YLabel = "nc"; else, h.YLabel = ""; end
+        h.FontSize = 10;
         h.GridVisible = 'off';
         cmap = get_colormap(color_red, color_light_green, color_green);
         colormap(f, cmap);
-        colorbar('off');
+        if mid ~= 1, colorbar('off'); end
         clim([-1,1]);
-        % title(methods{mid});
+        title(sprintf("\\rm %s", methods{mid}));
 
-        % Only show one tick out of 4
-        if mid == length(methods), show_idx = mod(find(hx), 4) == 0; else, show_idx = false(size(hx)); end
+        % Only subset of ticks
+        if mid == length(methods), show_idx = mod(find(hx), 10) == 0; else, show_idx = false(size(hx)); end
         h.XDisplayLabels(~show_idx) = {''};
 
-        show_idy = mod(find(hy), 5) == 0;
+        if mid < 3, show_idy = mod(hy, 50) == 0; else, show_idy = mod(hy, 25) == 0; end
         h.YDisplayLabels(~show_idy) = {''};
     end
 
@@ -546,6 +545,7 @@ for eid = 1 : length(draft{1}.exn)
     fig_height = 300;
     f = figure();
     hold("on");
+    fontsize(f, 10, "points");
 
     % Figure format
     set(gcf,'PaperPositionMode','auto');
@@ -570,13 +570,13 @@ for eid = 1 : length(draft{1}.exn)
             % Linear regression
             x = (0:20:5000)';
             y = predict(mdl, x);
-            plot(x, y, "Color", color, "DisplayName", methods{mid}, "LineWidth", 2);
+            plot(x, y, "Color", color, "DisplayName", sprintf("%s (%.3f)", methods{mid}, mdl.Coefficients.Estimate(2)), "LineWidth", 2);
 
             % Figure meta
             xlim([0,5000]);
             ylim([0,400]);
-            title("Feasibility border estimation");
-            xlabel("ns");
+            % title("Feasibility border estimation");
+            xlabel("ns*");
             ylabel("nc");
         end
     end
@@ -683,12 +683,13 @@ for eid = 1 : length(draft{mid}.exn)
             % plotid =  logid + 2 * cid - 2;  % To draw subplots col,row insead of row,col like standard
             % ax = subplot(length(draft{1}.nc), 2, plotid);
             ax = subplot(length(draft{1}.nc), 1, cid);
+            ax.FontSize = 11;
             hold("on");
     
             xlabel("ns");
 
             % if logid == 1
-                ylabel(sprintf("nc=%d - runtime (s)", draft{1}.nc(cid)));
+                ylabel({sprintf("\\bf nc=%d", draft{1}.nc(cid)),'\rm computation time (s)'});
             % end
 
             for mid = 1 : length(methods)
@@ -840,11 +841,12 @@ for eid = 1 : length(draft{mid}.exn)
 
     for sid = 1 : length(draft{1}.ns)
         ax = subplot(length(draft{1}.ns), 1, sid);
+        ax.FontSize = 11;
         hold("on");
 
         xlabel("nc");
 
-        ylabel(sprintf("ns=%d - runtime (s)", draft{1}.ns(sid)));
+        ylabel({sprintf("\\bf ns=%d", draft{1}.ns(sid)),'\rm computation time (s)'});
 
         for mid = 1 : length(methods)
             if size(draft{mid}.runtimes, 3) >= sid
@@ -994,12 +996,13 @@ for eid = 1 : length(draft{1}.exn)
         for cid = 1 : length(draft{1}.nc)
             % plotid =  sid + (cid - 1) * length(draft{1}.ns);
             ax = subplot(length(draft{1}.nc), 1, cid);
+            ax.FontSize = 11;
             hold("on");
     
             xlabel("no");
     
             if sid == 1
-                ylabel(sprintf("nc=%d - runtime (s)", draft{1}.nc(cid)));
+                ylabel({sprintf("\\bf nc=%d", draft{1}.nc(cid)),'\rm computation time (s)'});
             end
 
             if cid == 1
@@ -1585,7 +1588,7 @@ for eid = 1 : length(draft{1}.exn)
         elseif aid == 2
             ylim([-5e-6, 6e-5]);
         elseif aid > 2
-            ylim([-0.5, 7]);
+            ylim([-0.8, 7]);
         end
     end
 
@@ -1754,6 +1757,7 @@ end
 % Parameters
 timestr = "202408281750";
 methods = {'mvgc-lwr', 'mvgc-ols', 'mvgc-lasso', 'mvgc-sbl', 'mvgc-lapsbl', 'pdc-lwr', 'pdc-ols'};
+colors = {"red", "purple", "blue", "yellow", "orange", "green", "blueGrey"};
 fig_width = 1000;
 fig_height = 300;
 green = get_colors("green", 700);
@@ -1948,6 +1952,7 @@ for eid = 1 : length(exn)
 end
 
 % Swarm chart to visualise intercept - corrected
+snr_caption_string = {"noiseless", "SNR=3", "SNR=1", "SNR=1/3"};
 for eid = 1 : length(exn)
     f = figure();
     hold("on");
@@ -1971,9 +1976,19 @@ for eid = 1 : length(exn)
         tmp_table = table(Weights, Type_names, Colors);
     
         swarmchart(ax, tmp_table, 'Type_names', 'Weights', 'filled', 'ColorVariable', 'Colors', 'SizeData', 5, 'MarkerEdgeAlpha', 0.0, 'MarkerFaceAlpha', 0.5);
-        ylabel(methods{mid});
-        xlabel("");
         ylim([0,1]);
+
+        if eid == length(exn)
+            xlabel(sprintf("\\fontsize{12}%s", methods{mid}), "Color", get_colors(colors{mid}, 600));
+        else
+            xlabel("");
+        end
+
+        if mid == 1
+            ylabel({sprintf("\\fontsize{14}%s", snr_caption_string{eid}),'\fontsize{10} effective coupling strength'});
+        else
+            ylabel("");
+        end
 
         % Find detectability threshold
         thresh = threshold_distributions(Weights(~logical(type_var)), Weights(logical(type_var)));

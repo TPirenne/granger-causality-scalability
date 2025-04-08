@@ -1,8 +1,8 @@
 Row,t0,t1,t2,t3,t4
-mvgc-lwr,97,72,45,6,87
-mvgc-ols,76,72,44,14,87
-mvgc-lasso,86,66,2,16,100
-mvgc-sbl,51,90,10,0,100
-mvgc-lapsbl,60,90,14,16,100
-pdc-lwr,40,74,14,17,98
-pdc-ols,58,91,0,16,98
+mvgc-lwr,98,79,38,4,89
+mvgc-ols,80,64,38,16,88
+mvgc-lasso,92,59,49,11,100
+mvgc-sbl,57,88,16,0,99
+mvgc-lapsbl,63,88,12,17,100
+pdc-lwr,44,83,16,17,96
+pdc-ols,65,86,10,20,98

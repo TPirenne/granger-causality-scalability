@@ -1,7 +1,10 @@
 data/mvgc-lapsbl
 data/mvgc-lasso
+data/mvgc-lasso_fix
 data/mvgc-lwr
 data/mvgc-ols
 data/mvgc-sbl
 data/pdc-lwr
 data/pdc-ols
+data/results-v1
+data/results/F04a/fitted.mat

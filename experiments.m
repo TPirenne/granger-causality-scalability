@@ -93,7 +93,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 caus_measure = caus_est_methods{ceid};
 
                 % Saving parameters
-                save_path = sprintf('AICA/Data/SC/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers
@@ -240,7 +240,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 caus_measure = caus_est_methods{ceid};
 
                 % Saving parameters
-                save_path = sprintf('AICA/Data/SC-preds/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data-preds/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers
@@ -368,7 +368,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 caus_measure = caus_est_methods{ceid};
 
                 % Saving parameters
-                save_path = sprintf('AICA/Data/SC/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers
@@ -519,7 +519,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 caus_measure = caus_est_methods{ceid};
 
                 % Saving parameters
-                save_path = sprintf('AICA/Data/SC/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers
@@ -634,7 +634,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 caus_measure = caus_est_methods{ceid};
 
                 % Saving parameters
-                save_path = sprintf('AICA/Data/SC/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers
@@ -749,7 +749,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 method_skip = false;
 
                 % Saving parameters
-                save_path = sprintf('AICA/Data/SC/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers

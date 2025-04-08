@@ -50,8 +50,8 @@ function [params, error_cov] = lasso_reg(data, order)
     A = nan(nc, order * nc);
 
     for cid = 1 : nc
-        lambda = 1e-3;
-        B = lasso(X', Y(cid, :), 'Lambda', lambda);
+        [B, info] = lasso(X', Y(cid, :), 'CV', 5);
+        B = B(:, info.IndexMinMSE);
         A(cid, :) = B;
     end
 
