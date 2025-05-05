@@ -145,7 +145,7 @@ NOW = string(datetime('now'), 'yyyyMMddHHmm');
 % mvgc
 exp5 = struct();
 exp5.run = true;
-exp5.mvar_est_methods = {"lwr", "ols", "lasso", "sbl", "lapsbl"};
+exp5.mvar_est_methods = {"ols", "lasso", "sbl", "lapsbl"};
 exp5.caus_est_methods = {"mvgc"};
 exp5.ns = [50:50:1000, 1100:100:10000, 11000:1000:50000];
 exp5.nc = [5:5:50,60:10:200, 300:50:1000];
@@ -450,21 +450,21 @@ experiments(struct("run", false), exp2);
 
 
 %% LASSO %%
-% Fig.2a (202409051456) - ns x nc
-exp1 = struct();
-exp1.run = true;
-exp1.mvar_est_methods = {"lasso"};
-exp1.caus_est_methods = {"mvgc"};
-exp1.ns = [100:100:1000, 1500:500:10000];
-exp1.nc = [5:5:50];
-exp1.exn = [0.0, 0.50];
-exp1.no = [10];
-exp1.nt = 5;
-exp1.cutoff_time_trial = 1200;
-exp1.skip_cut_of = ["nc"];
-exp1.timestamp = "202409051456";
-
-experiments(exp1);
+% % Fig.2a (202409051456) - ns x nc
+% exp1 = struct();
+% exp1.run = true;
+% exp1.mvar_est_methods = {"lasso"};
+% exp1.caus_est_methods = {"mvgc"};
+% exp1.ns = [100:100:1000, 1500:500:10000];
+% exp1.nc = [5:5:50];
+% exp1.exn = [0.0, 0.50];
+% exp1.no = [10];
+% exp1.nt = 5;
+% exp1.cutoff_time_trial = 1200;
+% exp1.skip_cut_of = ["nc"];
+% exp1.timestamp = "202409051456";
+% 
+% experiments(exp1);
 % 
 % % Fig.2b (202412222218) - feasibility area
 % exp6 = struct();

@@ -460,11 +460,10 @@ for eid = 1 : length(draft{1}.exn)
         ns = draft{mid}.ns;
 
         % Remove skipped values from perf_mask
-        failed_mask = isnan(perf_mask);
+        failed_mask = isnan(perf_mask) | (perf_mask < 0.5);
         perf_mask(failed_mask) = -1;
 
         %%% Fetch border values for feasibility %%% ---> Failed mask !! And
-        %%% figure out how to get last true instead of first
         % Horizontally
         draft{mid}.feasibility_data = [];
         for fcid = 1 : size(failed_mask, 1)
@@ -517,8 +516,8 @@ for eid = 1 : length(draft{1}.exn)
 
         % Linear regression
         if ~isempty(draft{mid}.feasibility_data)
-            x = draft{mid}.feasibility_data(:, 1);
-            y = draft{mid}.feasibility_data(:, 2);
+            y = draft{mid}.feasibility_data(:, 1);
+            x = draft{mid}.feasibility_data(:, 2);
             draft{mid}.feasibility_border = fitlm(x,y);
         end
 
@@ -560,24 +559,25 @@ for eid = 1 : length(draft{1}.exn)
             color = color_shades{round(length(color_shades) * shade_prop)};
 
             % Fit information
-            x = draft{mid}.feasibility_data(:,1);
-            y = draft{mid}.feasibility_data(:,2);
+            y = draft{mid}.feasibility_data(:,1);
+            x = draft{mid}.feasibility_data(:,2);
             mdl = draft{mid}.feasibility_border;
 
             % Border points
             scatter(x, y, 20, color, "filled", "o", "HandleVisibility", "off", "MarkerFaceAlpha", 0.3, "MarkerEdgeAlpha", 0.3);
 
             % Linear regression
-            x = (0:20:5000)';
+            x = (0:1:400)';
             y = predict(mdl, x);
             plot(x, y, "Color", color, "DisplayName", sprintf("%s (%.3f)", methods{mid}, mdl.Coefficients.Estimate(2)), "LineWidth", 2);
 
             % Figure meta
-            xlim([0,5000]);
-            ylim([0,400]);
+            ylim([0,5000]);
+            xlim([0,400]);
             % title("Feasibility border estimation");
-            xlabel("ns*");
-            ylabel("nc");
+            ylabel("ns*");
+            xlabel("nc");
+            legend("Location","northwest");
         end
     end
     

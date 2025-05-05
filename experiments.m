@@ -672,7 +672,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                         runtimes(cid, sid) = info.runtime;
 
                         % Check skip state
-                        if ~isnan(info.stats.f1)
+                        if ~isnan(info.stats.f1) && info.stats.f1 > 0.5 %% Second part is a test
                             perf_bound(cid, sid) = true;
 
                             if (sid - 1 > 0)
