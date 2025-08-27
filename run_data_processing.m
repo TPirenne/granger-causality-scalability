@@ -55,13 +55,11 @@ for mid = 1 : length(methods)
     load(sprintf('data/%s/%s/ns.mat', method, timestr));
     load(sprintf('data/%s/%s/no.mat', method, timestr));
     load(sprintf('data/%s/%s/nt.mat', method, timestr));
-    load(sprintf('data/%s/%s/results.mat', method, timestr));
     load(sprintf('data/%s/%s/runtimes.mat', method, timestr));
 
     draft{mid} = struct();
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
-    draft{mid}.results = results;
     draft{mid}.ns = ns;
     draft{mid}.nc = nc;
     draft{mid}.no = no;
@@ -141,18 +139,14 @@ for mid = 1 : length(methods)
     load(sprintf('data/%s/%s/nc.mat', method, timestr));
     load(sprintf('data/%s/%s/ns.mat', method, timestr));
     load(sprintf('data/%s/%s/no.mat', method, timestr));
-    % load(sprintf('data/%s/%s/nt.mat', method, timestr));
-    load(sprintf('data/%s/%s/results.mat', method, timestr));
     load(sprintf('data/%s/%s/runtimes.mat', method, timestr));
 
     draft{mid} = struct();
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
-    draft{mid}.results = results;
     draft{mid}.ns = ns;
     draft{mid}.nc = nc;
     draft{mid}.no = no;
-    % draft{mid}.nt = nt;
     draft{mid}.exn = exn;
 end
 
@@ -177,10 +171,7 @@ for eid = 1 : length(draft{1}.exn)
         color_light_green = get_colors("green", 50);
 
         % Process data
-        % fail_mask = any(squeeze(cellfun(@(c) isfield(c, 'error') , draft{mid}.results(eid, :, :, :))), 3);
-        % fail_mask = any(squeeze(isnan(draft{mid}.f1s(eid, :, :, :))), 3);
         perf_mask = draft{mid}.f1s(:, :); % perf_mask = mean(squeeze(draft{mid}.f1s(eid, :, :, :)), 3);
-        % time_mask = draft{mid}.runtimes(:, :);
         ns = draft{mid}.ns;
 
         % Skipped perfs > 0.9 in same nc need to be added manually
@@ -422,18 +413,14 @@ for mid = 1 : length(methods)
     load(sprintf('data/%s/%s/nc.mat', method, timestr));
     load(sprintf('data/%s/%s/ns.mat', method, timestr));
     load(sprintf('data/%s/%s/no.mat', method, timestr));
-    % load(sprintf('data/%s/%s/nt.mat', method, timestr));
-    load(sprintf('data/%s/%s/results.mat', method, timestr));
     load(sprintf('data/%s/%s/runtimes.mat', method, timestr));
 
     draft{mid} = struct();
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
-    draft{mid}.results = results;
     draft{mid}.ns = ns;
     draft{mid}.nc = nc;
     draft{mid}.no = no;
-    % draft{mid}.nt = nt;
     draft{mid}.exn = exn;
 end
 
@@ -1160,13 +1147,11 @@ for mid = 1 : length(methods)
     load(sprintf('data/%s/%s/ns.mat', method, timestr));
     load(sprintf('data/%s/%s/no.mat', method, timestr));
     load(sprintf('data/%s/%s/nt.mat', method, timestr));
-    load(sprintf('data/%s/%s/results.mat', method, timestr));
     load(sprintf('data/%s/%s/runtimes.mat', method, timestr));
 
     draft{mid} = struct();
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
-    draft{mid}.results = results;
     draft{mid}.ns = ns;
     draft{mid}.nc = nc;
     draft{mid}.no = no;
@@ -1807,7 +1792,6 @@ for mid = 1 : length(methods)
     load(sprintf('data/%s/%s/ns.mat', method, timestr));
     load(sprintf('data/%s/%s/no.mat', method, timestr));
     load(sprintf('data/%s/%s/nt.mat', method, timestr));
-    load(sprintf('data/%s/%s/results.mat', method, timestr));
     load(sprintf('data/%s/%s/weights.mat', method, timestr));
 
     draft{mid} = struct();
