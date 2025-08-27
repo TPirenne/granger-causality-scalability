@@ -377,6 +377,8 @@ for eid = 1 : length(draft{1}.exn)
             plot(x, y, "Color", color, "DisplayName", methods{mid}, "LineWidth", 2);
 
             % Figure meta
+            ax = gca;
+            ax.FontSize = 14;
             xlim([0,5000]);
             ylim([0,400]);
             title("Feasibility border estimation");
@@ -572,6 +574,8 @@ for eid = 1 : length(draft{1}.exn)
             plot(x, y, "Color", color, "DisplayName", sprintf("%s (%.3f)", methods{mid}, mdl.Coefficients.Estimate(2)), "LineWidth", 2);
 
             % Figure meta
+            ax = gca;
+            ax.FontSize = 14;
             ylim([0,5000]);
             xlim([0,400]);
             % title("Feasibility border estimation");
@@ -683,13 +687,13 @@ for eid = 1 : length(draft{mid}.exn)
             % plotid =  logid + 2 * cid - 2;  % To draw subplots col,row insead of row,col like standard
             % ax = subplot(length(draft{1}.nc), 2, plotid);
             ax = subplot(length(draft{1}.nc), 1, cid);
-            ax.FontSize = 11;
+            ax.FontSize = 14;
             hold("on");
     
-            xlabel("ns");
+            xlabel("ns", "FontSize", 14);
 
             % if logid == 1
-                ylabel({sprintf("\\bf nc=%d", draft{1}.nc(cid)),'\rm computation time (s)'});
+                ylabel({sprintf("\\bf nc=%d", draft{1}.nc(cid)),'\rm computation time (s)'}, "FontSize", 14);
             % end
 
             for mid = 1 : length(methods)
@@ -841,12 +845,12 @@ for eid = 1 : length(draft{mid}.exn)
 
     for sid = 1 : length(draft{1}.ns)
         ax = subplot(length(draft{1}.ns), 1, sid);
-        ax.FontSize = 11;
+        ax.FontSize = 14;
         hold("on");
 
-        xlabel("nc");
+        xlabel("nc", "FontSize", 14);
 
-        ylabel({sprintf("\\bf ns=%d", draft{1}.ns(sid)),'\rm computation time (s)'});
+        ylabel({sprintf("\\bf ns=%d", draft{1}.ns(sid)),'\rm computation time (s)'}, "FontSize", 14);
 
         for mid = 1 : length(methods)
             if size(draft{mid}.runtimes, 3) >= sid
@@ -996,13 +1000,13 @@ for eid = 1 : length(draft{1}.exn)
         for cid = 1 : length(draft{1}.nc)
             % plotid =  sid + (cid - 1) * length(draft{1}.ns);
             ax = subplot(length(draft{1}.nc), 1, cid);
-            ax.FontSize = 11;
+            ax.FontSize = 14;
             hold("on");
     
-            xlabel("no");
+            xlabel("no", "FontSize", 14);
     
             if sid == 1
-                ylabel({sprintf("\\bf nc=%d", draft{1}.nc(cid)),'\rm computation time (s)'});
+                ylabel({sprintf("\\bf nc=%d", draft{1}.nc(cid)),'\rm computation time (s)'}, "FontSize", 14);
             end
 
             if cid == 1
@@ -1582,6 +1586,8 @@ for eid = 1 : length(draft{1}.exn)
         swarmchart(tab_swarm, 'x', 'y', 'filled', 'ColorVariable','c', 'MarkerFaceAlpha', 0.1, 'MarkerEdgeAlpha', 0.1, 'SizeData', 75);
         xlabel(fitted{eid, 1}.t1.all_models{1}.CoefficientNames{aid});
         ylabel("");
+        ax = gca;
+        ax.FontSize = 14;
         
         if aid == 1
             ylim([-100,100]);
@@ -1651,10 +1657,12 @@ for rid = 1 : size(t1, 1)
     end
 end
 
+ax = gca;
+ax.FontSize = 14;
 xlim([-1,100]);
 ylim([-1,1000]);
-xlabel("c (s,o)");
-ylabel("time (s)");
+xlabel("c (s,o)", "FontSize", 16);
+ylabel("time (s)", "FontSize", 16);
 title("a0");
 annotation('textarrow', [.32, .32], [.6, .92], "Color", a0_shade, "LineWidth", 4, "LineStyle", ":", "HeadWidth", 20, "HeadLength", 20);
 
@@ -1673,9 +1681,12 @@ for rid = 1 : size(t2, 1)
     end
 end
 
+ax = gca;
+ax.FontSize = 14;
+ax.YTick = [];
 xlim([-1,100]);
 ylim([-1,1000]);
-xlabel("c (s,o)");
+xlabel("c (s,o)", "FontSize", 16);
 % ylabel("time (s)");
 title("a2");
 annotation('textarrow', [.88, .65], [.65, .80], "Color", a0_shade, "LineWidth", 4, "LineStyle", ":", "HeadWidth", 20, "HeadLength", 20);
@@ -1695,10 +1706,12 @@ for rid = 1 : size(t3, 1)
     end
 end
 
+ax = gca;
+ax.FontSize = 14;
 xlim([-1,100]);
 ylim([-1,1000]);
-xlabel("c");
-ylabel("time (s)");
+xlabel("c", "FontSize", 16);
+ylabel("time (s)", "FontSize", 16);
 title("a3");
 annotation('textarrow', [.28, .14], [.13, .42], "Color", a0_shade, "LineWidth", 4, "LineStyle", ":", "HeadWidth", 20, "HeadLength", 20);
 
@@ -1717,9 +1730,12 @@ for rid = 1 : size(t3, 1)
     end
 end
 
+ax = gca;
+ax.FontSize = 14;
+ax.YTick = [];
 xlim([-1,100]);
 ylim([-1,1000]);
-xlabel("s");
+xlabel("s", "FontSize", 16);
 % ylabel("time (s)");
 title("a4");
 annotation('textarrow', [.55, .41], [.13, .42], "Color", a0_shade, "LineWidth", 4, "LineStyle", ":", "HeadWidth", 20, "HeadLength", 20);
@@ -1739,9 +1755,12 @@ for rid = 1 : size(t3, 1)
     end
 end
 
+ax = gca;
+ax.FontSize = 14;
+ax.YTick = [];
 xlim([-1,100]);
 ylim([-1,1000]);
-xlabel("o");
+xlabel("o", "FontSize", 16);
 % ylabel("time (s)");
 title("a5");
 annotation('textarrow', [.82, .68], [.13, .42], "Color", a0_shade, "LineWidth", 4, "LineStyle", ":", "HeadWidth", 20, "HeadLength", 20);
@@ -1979,16 +1998,20 @@ for eid = 1 : length(exn)
         ylim([0,1]);
 
         if eid == length(exn)
-            xlabel(sprintf("\\fontsize{12}%s", methods{mid}), "Color", get_colors(colors{mid}, 600));
+            xlabel(sprintf("\\fontsize{16}%s", methods{mid}), "Color", get_colors(colors{mid}, 600));
         else
             xlabel("");
         end
 
         if mid == 1
-            ylabel({sprintf("\\fontsize{14}%s", snr_caption_string{eid}),'\fontsize{10} effective coupling strength'});
+            ylabel({sprintf("\\fontsize{16}%s", snr_caption_string{eid}),'\fontsize{14} effective coupling strength'});
         else
             ylabel("");
         end
+
+        % Font size
+        ax = gca;
+        ax.FontSize = 14;
 
         % Find detectability threshold
         thresh = threshold_distributions(Weights(~logical(type_var)), Weights(logical(type_var)));
