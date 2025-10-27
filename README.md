@@ -27,4 +27,6 @@ To replicate the results, the scripts can be run as follow.
 3. Baccala, L.A. and Sameshima, K. Partial Directed Coherence: A New Concept in Neural Structure Determination. Biological Cybernetics, 84, 463-474, (**2001**). [doi:10.1007/PL00007990](https://doi.org/10.1007/pl00007990)
 4. Barnett, Lionel, and Anil K Seth. “The MVGC multivariate Granger causality toolbox: a new approach to Granger-causal inference.” *Journal of neuroscience methods* vol. 223 (**2014**): 50-68. [doi:10.1016/j.jneumeth.2013.10.018](https://doi.org/10.1016/j.jneumeth.2013.10.018)
 5. Peiyang, Li et al., "Robust brain causality network construction based on Bayesian multivariate autoregression", *Biomedical Signal Processing and Control*, Volume 58, (**2020**). [doi:10.1016/j.bspc.2020.101864](https://doi.org/10.1016/j.bspc.2020.101864)
-6. Liu, Ke et al. “Robust Bayesian Estimation of EEG-Based Brain Causality Networks.” *IEEE transactions on bio-medical engineering* vol. 70,6 (**2023**): 1879-1890. [doi:10.1109/TBME.2022.3231627](https://doi.org/10.1109/TBME.2022.3231627)
+6. Liu, Ke et al. “Robust Bayesian Estimation of EEG-Based Brain Causality Networks.” *IEEE transactions on bio-medical engineering* vol. 70,6 (**2023**): 1879-1890. [doi:10.1109/TBME.2022.3231627](https://doi.org/10.1109/TBME.2022.3231627) 
+
+
