@@ -1,4 +1,4 @@
-function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
+function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scaling Causality
 %   Tests multiple MVAR parameter estimation methods to derive causality
@@ -14,6 +14,8 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
 %       - Exp4: Exp1 but loops are ns -> no -> nc.
 %       - Exp5: Feasibility thresh ns x nc.
 %       - Exp6: Feasibility area ns x nc (thresh + timeout).
+%       - Exp7: Effect of simulation parameters on causality wrt nc.
+%       - Exp8: Mismatched order.
 %
 % =========================================================================
 % MIT License                                                             %
@@ -40,12 +42,14 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
 % SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Parse exps
-    if ~exist("exp1", "var"), exp1 = struct("run", false); end
-    if ~exist("exp2", "var"), exp2 = struct("run", false); end
-    if ~exist("exp3", "var"), exp3 = struct("run", false); end
-    if ~exist("exp4", "var"), exp4 = struct("run", false); end
-    if ~exist("exp5", "var"), exp5 = struct("run", false); end
-    if ~exist("exp6", "var"), exp6 = struct("run", false); end
+    if ~exist("exp1", "var") || isempty(exp1), exp1 = struct("run", false); end
+    if ~exist("exp2", "var") || isempty(exp2), exp2 = struct("run", false); end
+    if ~exist("exp3", "var") || isempty(exp3), exp3 = struct("run", false); end
+    if ~exist("exp4", "var") || isempty(exp4), exp4 = struct("run", false); end
+    if ~exist("exp5", "var") || isempty(exp5), exp5 = struct("run", false); end
+    if ~exist("exp6", "var") || isempty(exp6), exp6 = struct("run", false); end
+    if ~exist("exp7", "var") || isempty(exp7), exp7 = struct("run", false); end
+    if ~exist("exp8", "var") || isempty(exp8), exp8 = struct("run", false); end
 
     %% Experiment 1
     if exp1.run
@@ -240,7 +244,7 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                 caus_measure = caus_est_methods{ceid};
 
                 % Saving parameters
-                save_path = sprintf('data-preds/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
                 if SAVE, mkdir(save_path); end
                 
                 % Result containers
@@ -835,6 +839,256 @@ function NOW = experiments(exp1, exp2, exp3, exp4, exp5, exp6)
                     save(sprintf("%s/nc.mat", save_path), 'nc', '-v7.3');
                     save(sprintf("%s/exn.mat", save_path), 'exn', '-v7.3');
                     save(sprintf("%s/no.mat", save_path), 'no', '-v7.3');
+                    save(sprintf("%s/caus_est_method.mat", save_path), 'caus_est_methods_save', '-v7.3');
+                    save(sprintf("%s/mvar_est_method.mat", save_path), 'mvar_est_methods_save', '-v7.3');
+                end
+            end
+        end
+    end
+
+    %% Experiment 7
+    if exp7.run
+        % General parameters
+        SAVE = true;
+        NOW = string(datetime('now'), 'yyyyMMddHHmm');
+
+        % Save warning state and (temporarily) disable all warnings
+        w = warning();
+        warning('off', 'all');
+
+        % Parse required parameters
+        caus_est_methods = exp7.caus_est_methods;
+        mvar_est_methods = exp7.mvar_est_methods;
+        sim_params = exp7.sim_params;
+        ns = exp7.ns;
+        nc = exp7.nc;
+
+        % Parse optional parameters (or sets default values)
+        if isfield(exp7, "exn"), exn = exp7.exn; else, exn = 0.0; end
+        if isfield(exp7, "no"), no = exp7.no; else, no = 10; end
+        if isfield(exp7, "cutoff_time_trial"), cutoff_time_trial = exp7.cutoff_time_trial; else, cutoff_time_trial = false; end
+        if isfield(exp7, "timestamp"), NOW = exp7.timestamp; end
+
+        % For each caus_est_method
+        for ceid = 1 : length(caus_est_methods)
+            for meid = 1 : length(mvar_est_methods)
+                % Log advancement
+                fprintf("estimation: %s - %s\n", caus_est_methods{ceid}, mvar_est_methods{meid});
+                est_method = mvar_est_methods{meid};
+                caus_measure = caus_est_methods{ceid};
+
+                % Saving parameters
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                if SAVE, mkdir(save_path); end
+                
+                % Result containers
+                results = cell(length(exn), length(nc), length(ns), length(no), length(sim_params));
+                f1s = nan(length(exn), length(nc), length(ns), length(no), length(sim_params));
+                recalls = nan(length(exn), length(nc), length(ns), length(no), length(sim_params));
+                fprs = nan(length(exn), length(nc), length(ns), length(no), length(sim_params));
+                runtimes = nan(length(exn), length(nc), length(ns), length(no), length(sim_params));
+
+                % Run estimations
+                for eid = 1 : length(exn)
+                    for tid = 1 : length(sim_params)
+                        sim_param = sim_params{tid};
+
+                        for sid = 1 : length(ns)
+                            for oid = 1 : length(no)
+                                for cid = 1 : length(nc)
+                                    % Initialize output results
+                                    results{eid, cid, sid, oid, tid} = struct();
+
+                                    % Parse sim_param
+                                    if strcmpi(sim_param, "gwn") || strcmpi(sim_param, "pink") || strcmpi(sim_param, "red") || strcmpi(sim_param, "blue") || strcmpi(sim_param, "violet")
+                                        noise_type = sim_param;
+                                        node_degree = [];
+                                        caus_profile = [];
+                                    elseif contains(sim_param, "nodedeg")
+                                        noise_type = [];
+                                        node_degree = str2double(extractAfter(sim_param, 7));
+                                        caus_profile = [];
+                                    elseif strcmpi(sim_param, "feedback") || strcmpi(sim_param, "pow") || strcmpi(sim_param, "cos")
+                                        noise_type = [];
+                                        node_degree = [];
+                                        caus_profile = sim_param;
+                                    end
+        
+                                    % Simulate data
+                                    order = no(oid);
+                                    [data, gt] = draft_data(ns(sid), nc(cid), exn(eid), order, [], noise_type, node_degree, caus_profile);
+        
+                                    % Estimate causality
+                                    fprintf("exn: %.2f, nc: %d, ns: %d, order %d, sp: %s", exn(eid), nc(cid), ns(sid), no(oid), sim_param);
+                                    timer = tic();
+                                    try
+                                        [cm, info] = estimate_causality(data, order, est_method, caus_measure);
+                                    catch e
+                                        cm = nan(nc(cid));
+                                        info = struct("error", e);
+                                    end
+                                    info.runtime = toc(timer);
+                                    fprintf("  (%.2f s)\n", info.runtime);
+
+                                    % Keep longest duration among trials
+                                    trial_cumulated_time = info.runtime;
+        
+                                    % Compute performance results
+                                    info.stats = stats_cm(cm, gt);
+                                    info.cm = cm;
+                                    info.gt = gt;
+        
+                                    % Store results into containers
+                                    results{eid, cid, sid, oid, tid} = info;
+                                    f1s(eid, cid, sid, oid, tid) = info.stats.f1;
+                                    recalls(eid, cid, sid, oid, tid) = info.stats.recall;
+                                    fprs(eid, cid, sid, oid, tid) = info.stats.fpr;
+                                    runtimes(eid, cid, sid, oid, tid) = info.runtime;
+
+                                    % If runtime was too long, break again to stop increasing nc
+                                    if (cutoff_time_trial && trial_cumulated_time > cutoff_time_trial), break; end
+                                end
+                                % If runtime was too long, break again to stop increasing no
+                                if (cutoff_time_trial && trial_cumulated_time > cutoff_time_trial), break; end
+                            end
+                            % If runtime was too long, break again to stop increasing ns
+                            if (cutoff_time_trial && trial_cumulated_time > cutoff_time_trial), break; end
+                        end
+                    end
+                end
+
+                % Format outputs to save
+                caus_est_methods_save = caus_est_methods{ceid};
+                mvar_est_methods_save = mvar_est_methods{meid};
+
+                % Reset warnings to original state
+                warning(w);
+
+                % Save
+                if SAVE
+                    save(sprintf("%s/results.mat", save_path), 'results', '-v7.3');
+                    save(sprintf("%s/f1s.mat", save_path), 'f1s', '-v7.3');
+                    save(sprintf("%s/recalls.mat", save_path), 'recalls', '-v7.3');
+                    save(sprintf("%s/fprs.mat", save_path), 'fprs', '-v7.3');
+                    save(sprintf("%s/runtimes.mat", save_path), 'runtimes', '-v7.3');
+                    save(sprintf("%s/ns.mat", save_path), 'ns', '-v7.3');
+                    save(sprintf("%s/nc.mat", save_path), 'nc', '-v7.3');
+                    save(sprintf("%s/exn.mat", save_path), 'exn', '-v7.3');
+                    save(sprintf("%s/sim_params.mat", save_path), 'sim_params', '-v7.3');
+                    save(sprintf("%s/no.mat", save_path), 'no', '-v7.3');
+                    save(sprintf("%s/caus_est_method.mat", save_path), 'caus_est_methods_save', '-v7.3');
+                    save(sprintf("%s/mvar_est_method.mat", save_path), 'mvar_est_methods_save', '-v7.3');
+                end
+            end
+        end
+    end
+
+    %% Experiment 8
+    if exp8.run
+        % General parameters
+        SAVE = true;
+        NOW = string(datetime('now'), 'yyyyMMddHHmm');
+
+        % Save warning state and (temporarily) disable all warnings
+        w = warning();
+        warning('off', 'all');
+
+        % Parse required parameters
+        caus_est_methods = exp8.caus_est_methods;
+        mvar_est_methods = exp8.mvar_est_methods;
+        no_data = exp8.no_data;
+        no_estim = exp8.no_estim;
+        ns = exp8.ns;
+        nc = exp8.nc;
+
+        % Parse optional parameters (or sets default values)
+        if isfield(exp8, "exn"), exn = exp8.exn; else, exn = 0.0; end
+        if isfield(exp8, "cutoff_time_trial"), cutoff_time_trial = exp8.cutoff_time_trial; else, cutoff_time_trial = false; end
+        if isfield(exp8, "timestamp"), NOW = exp8.timestamp; end
+
+        % For each caus_est_method
+        for ceid = 1 : length(caus_est_methods)
+            for meid = 1 : length(mvar_est_methods)
+                % Log advancement
+                fprintf("estimation: %s - %s\n", caus_est_methods{ceid}, mvar_est_methods{meid});
+                est_method = mvar_est_methods{meid};
+                caus_measure = caus_est_methods{ceid};
+
+                % Saving parameters
+                save_path = sprintf('data/%s-%s/%s', caus_est_methods{ceid}, mvar_est_methods{meid}, NOW);
+                if SAVE, mkdir(save_path); end
+                
+                % Result containers
+                results = cell(length(exn), length(nc), length(ns), length(no_estim), length(no_data));
+                f1s = nan(length(exn), length(nc), length(ns), length(no_estim), length(no_data));
+                runtimes = nan(length(exn), length(nc), length(ns), length(no_estim), length(no_data));
+
+                % Run estimations
+                for eid = 1 : length(exn)
+                    for tid = 1 : length(no_data)
+                        for sid = 1 : length(ns)
+                            for oid = 1 : length(no_estim)
+                                for cid = 1 : length(nc)
+                                    % Initialize output results
+                                    results{eid, cid, sid, oid, tid} = struct();
+        
+                                    % Simulate data
+                                    [data, gt] = draft_data(ns(sid), nc(cid), exn(eid), no_data(tid));
+        
+                                    % Estimate causality
+                                    fprintf("exn: %.2f, nc: %d, ns: %d, order data %d, order estim: %d", exn(eid), nc(cid), ns(sid), no_data(tid), no_estim(oid));
+                                    timer = tic();
+                                    try
+                                        [cm, info] = estimate_causality(data, no_estim(oid), est_method, caus_measure);
+                                    catch e
+                                        cm = nan(nc(cid));
+                                        info = struct("error", e);
+                                    end
+                                    info.runtime = toc(timer);
+                                    fprintf("  (%.2f s)\n", info.runtime);
+
+                                    % Keep longest duration among trials
+                                    trial_cumulated_time = info.runtime;
+        
+                                    % Compute performance results
+                                    info.stats = stats_cm(cm, gt);
+                                    info.cm = cm;
+                                    info.gt = gt;
+        
+                                    % Store results into containers
+                                    results{eid, cid, sid, oid, tid} = info;
+                                    f1s(eid, cid, sid, oid, tid) = info.stats.f1;
+                                    runtimes(eid, cid, sid, oid, tid) = info.runtime;
+
+                                    % If runtime was too long, break again to stop increasing nc
+                                    if (cutoff_time_trial && trial_cumulated_time > cutoff_time_trial), break; end
+                                end
+                                % If runtime was too long, break again to stop increasing no
+                                if (cutoff_time_trial && trial_cumulated_time > cutoff_time_trial), break; end
+                            end
+                            % If runtime was too long, break again to stop increasing ns
+                            if (cutoff_time_trial && trial_cumulated_time > cutoff_time_trial), break; end
+                        end
+                    end
+                end
+
+                % Format outputs to save
+                caus_est_methods_save = caus_est_methods{ceid};
+                mvar_est_methods_save = mvar_est_methods{meid};
+
+                % Reset warnings to original state
+                warning(w);
+
+                % Save
+                if SAVE
+                    save(sprintf("%s/results.mat", save_path), 'results', '-v7.3');
+                    save(sprintf("%s/f1s.mat", save_path), 'f1s', '-v7.3');
+                    save(sprintf("%s/runtimes.mat", save_path), 'runtimes', '-v7.3');
+                    save(sprintf("%s/ns.mat", save_path), 'ns', '-v7.3');
+                    save(sprintf("%s/nc.mat", save_path), 'nc', '-v7.3');
+                    save(sprintf("%s/exn.mat", save_path), 'exn', '-v7.3');
+                    save(sprintf("%s/no_data.mat", save_path), 'no_data', '-v7.3');
+                    save(sprintf("%s/no_estim.mat", save_path), 'no_estim', '-v7.3');
                     save(sprintf("%s/caus_est_method.mat", save_path), 'caus_est_methods_save', '-v7.3');
                     save(sprintf("%s/mvar_est_method.mat", save_path), 'mvar_est_methods_save', '-v7.3');
                 end

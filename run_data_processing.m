@@ -1757,7 +1757,7 @@ if SAVE
     close(f);
 end
 
-%% Fig.5 %%
+%% Fig.5a %%
 % Parameters
 timestr = "202408281750";
 methods = {'mvgc-lwr', 'mvgc-ols', 'mvgc-lasso', 'mvgc-sbl', 'mvgc-lapsbl', 'pdc-lwr', 'pdc-ols'};
@@ -1771,7 +1771,7 @@ grey = get_colors("grey", 400);
 
 % Save parameters
 SAVE = true;
-save_path = sprintf('data/results/F05');
+save_path = sprintf('data/results/F05a');
 if (SAVE && ~exist(save_path, 'dir')), mkdir(save_path); end
 
 % Create containers for results of all methods
@@ -2010,4 +2010,611 @@ for eid = 1 : length(exn)
         print(gcf, '-dpng','-loose','-image','-r600', sprintf("%s/%s.png", save_path, filename));
         close(f);
     end
+end
+
+%% Fig.5b %%
+% Parameters
+methods = {'mvgc-lwr', 'mvgc-ols', 'mvgc-lasso', 'mvgc-sbl', 'mvgc-lapsbl', 'pdc-lwr', 'pdc-ols'};
+colors = {"red", "purple", "blue", "yellow", "orange", "green", "blueGrey"};
+fig_width = 1200;
+fig_height = 300;
+max_trials = 50;
+
+% Save parameters
+SAVE = true;
+save_path = sprintf('data/results/F05b');
+if (SAVE && ~exist(save_path, 'dir')), mkdir(save_path); end
+
+%%% NC %%%
+draft_nc = cell(1, length(methods));
+timestr = "202601131320";
+
+for mid = 1 : length(methods)
+    method = methods{mid};
+
+    % Load results
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr));
+    load(sprintf('data/%s/%s/fn.mat', method, timestr));
+    load(sprintf('data/%s/%s/fp.mat', method, timestr));
+    load(sprintf('data/%s/%s/tn.mat', method, timestr));
+    load(sprintf('data/%s/%s/tp.mat', method, timestr));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr));
+    load(sprintf('data/%s/%s/no.mat', method, timestr));
+    load(sprintf('data/%s/%s/nt.mat', method, timestr));
+    load(sprintf('data/%s/%s/weights.mat', method, timestr));
+
+    draft_nc{mid} = struct();
+    draft_nc{mid}.fn = fn;
+    draft_nc{mid}.fp = fp;
+    draft_nc{mid}.tp = tp;
+    draft_nc{mid}.tn = tn;
+    draft_nc{mid}.weights = weights;
+    draft_nc{mid}.ns = ns;
+    draft_nc{mid}.nc = nc;
+    draft_nc{mid}.no = no;
+    draft_nc{mid}.nt = nt;
+    draft_nc{mid}.exn = exn;
+
+    nfolds = 5;
+    draft_nc{mid}.thresholds = NaN(nfolds, length(draft_nc{mid}.nc));
+
+    % Extract weights of fp, fn, tp, tn across trials
+    for eid = 1 : length(exn)
+        % Compute the 5x3 thresholds
+        for fid = 1 : nfolds
+            trial_from = 1 + round(max_trials / nfolds) * (fid - 1);
+            trial_to = trial_from + round(max_trials / nfolds) - 1;
+
+            for cid = 1 : length(draft_nc{mid}.nc)
+                tp_wghts = [];
+                fn_wghts = [];
+                for tid = trial_from : trial_to
+                    tp_tmp = tp{eid,cid,:,:,tid};
+                    fn_tmp = fn{eid,cid,:,:,tid};
+                    w_tmp = weights{eid,cid,:,:,tid};
+        
+                    tp_wghts = cat(1, tp_wghts, reshape(w_tmp(tp_tmp), [], 1));
+                    fn_wghts = cat(1, fn_wghts, reshape(w_tmp(fn_tmp), [], 1));
+                end
+    
+                draft_nc{mid}.thresholds(fid, cid) = threshold_distributions(abs(tp_wghts), abs(fn_wghts));
+            end
+        end
+    end
+end
+
+%%% NS %%%
+draft_ns = cell(1, length(methods));
+timestr = "202601132832";
+
+for mid = 1 : length(methods)
+    method = methods{mid};
+
+    % Load results
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr));
+    load(sprintf('data/%s/%s/fn.mat', method, timestr));
+    load(sprintf('data/%s/%s/fp.mat', method, timestr));
+    load(sprintf('data/%s/%s/tn.mat', method, timestr));
+    load(sprintf('data/%s/%s/tp.mat', method, timestr));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr));
+    load(sprintf('data/%s/%s/no.mat', method, timestr));
+    load(sprintf('data/%s/%s/nt.mat', method, timestr));
+    load(sprintf('data/%s/%s/weights.mat', method, timestr));
+
+    draft_ns{mid} = struct();
+    draft_ns{mid}.fn = fn;
+    draft_ns{mid}.fp = fp;
+    draft_ns{mid}.tp = tp;
+    draft_ns{mid}.tn = tn;
+    draft_ns{mid}.weights = weights;
+    draft_ns{mid}.ns = ns;
+    draft_ns{mid}.nc = nc;
+    draft_ns{mid}.no = no;
+    draft_ns{mid}.nt = nt;
+    draft_ns{mid}.exn = exn;
+
+    nfolds = 5;
+    draft_ns{mid}.thresholds = NaN(nfolds, length(draft_ns{mid}.nc));
+
+    % Extract weights of fp, fn, tp, tn across trials
+    for eid = 1 : length(exn)
+        % Compute the 5x3 thresholds
+        for fid = 1 : nfolds
+            trial_from = 1 + round(max_trials / nfolds) * (fid - 1);
+            trial_to = trial_from + round(max_trials / nfolds) - 1;
+
+            for sid = 1 : length(draft_ns{mid}.ns)
+                tp_wghts = [];
+                fn_wghts = [];
+                for tid = trial_from : trial_to
+                    tp_tmp = tp{eid,:,sid,:,tid};
+                    fn_tmp = fn{eid,:,sid,:,tid};
+                    w_tmp = weights{eid,:,sid,:,tid};
+        
+                    tp_wghts = cat(1, tp_wghts, reshape(w_tmp(tp_tmp), [], 1));
+                    fn_wghts = cat(1, fn_wghts, reshape(w_tmp(fn_tmp), [], 1));
+                end
+    
+                draft_ns{mid}.thresholds(fid, sid) = threshold_distributions(abs(tp_wghts), abs(fn_wghts));
+            end
+        end
+    end
+end
+
+%%% NO %%%
+draft_no = cell(1, length(methods));
+timestr = "202601133034";
+
+for mid = 1 : length(methods)
+    method = methods{mid};
+
+    % Load results
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr));
+    load(sprintf('data/%s/%s/fn.mat', method, timestr));
+    load(sprintf('data/%s/%s/fp.mat', method, timestr));
+    load(sprintf('data/%s/%s/tn.mat', method, timestr));
+    load(sprintf('data/%s/%s/tp.mat', method, timestr));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr));
+    load(sprintf('data/%s/%s/no.mat', method, timestr));
+    load(sprintf('data/%s/%s/nt.mat', method, timestr));
+    load(sprintf('data/%s/%s/weights.mat', method, timestr));
+
+    draft_no{mid} = struct();
+    draft_no{mid}.fn = fn;
+    draft_no{mid}.fp = fp;
+    draft_no{mid}.tp = tp;
+    draft_no{mid}.tn = tn;
+    draft_no{mid}.weights = weights;
+    draft_no{mid}.ns = ns;
+    draft_no{mid}.nc = nc;
+    draft_no{mid}.no = no;
+    draft_no{mid}.nt = nt;
+    draft_no{mid}.exn = exn;
+
+    nfolds = 5;
+    draft_no{mid}.thresholds = NaN(nfolds, length(draft_no{mid}.nc));
+
+    % Extract weights of fp, fn, tp, tn across trials
+    for eid = 1 : length(exn)
+        % Compute the 5x3 thresholds
+        for fid = 1 : nfolds
+            trial_from = 1 + round(max_trials / nfolds) * (fid - 1);
+            trial_to = trial_from + round(max_trials / nfolds) - 1;
+
+            for oid = 1 : length(draft_no{mid}.no)
+                tp_wghts = [];
+                fn_wghts = [];
+                for tid = trial_from : trial_to
+                    tp_tmp = tp{eid,:,:,oid,tid};
+                    fn_tmp = fn{eid,:,:,oid,tid};
+                    w_tmp = weights{eid,:,:,oid,tid};
+        
+                    tp_wghts = cat(1, tp_wghts, reshape(w_tmp(tp_tmp), [], 1));
+                    fn_wghts = cat(1, fn_wghts, reshape(w_tmp(fn_tmp), [], 1));
+                end
+    
+                draft_no{mid}.thresholds(fid, oid) = threshold_distributions(abs(tp_wghts), abs(fn_wghts));
+            end
+        end
+    end
+end
+
+%%% Display %%%
+f = figure();
+
+% Printing params
+set(gcf,'PaperPositionMode','auto');         
+set(gcf,'PaperOrientation','landscape');
+set(gcf, 'Position',  [100, 100, 100 + fig_width, 100 + fig_height]);   % Resize fig window
+
+tiledlayout(1, 3);
+
+%%% NC %%%
+ax = nexttile;
+hold("on");
+for mid = 1 : length(methods)
+    cdraft = draft_nc{mid};
+    errorbar(cdraft.nc, mean(cdraft.thresholds), std(cdraft.thresholds), "DisplayName", methods{mid}, "Color", get_colors(colors{mid}, 600), "LineWidth", 2);
+end
+% legend();
+ylabel("detectability threshold", "FontSize", 16);
+xlabel("nc", "FontSize", 16);
+ylim([0,.75]);
+xlim([7, 21]);
+
+%%% NS %%%
+ax = nexttile;
+hold("on");
+for mid = 1 : length(methods)
+    sdraft = draft_ns{mid};
+    errorbar(sdraft.ns, mean(sdraft.thresholds), std(sdraft.thresholds), "DisplayName", methods{mid}, "Color", get_colors(colors{mid}, 600), "LineWidth", 2);
+end
+% legend();
+ylabel("detectability threshold", "FontSize", 16);
+xlabel("ns", "FontSize", 16);
+ylim([0,.75]);
+xlim([0, 5300]);
+
+%%% NO %%%
+ax = nexttile;
+hold("on");
+for mid = 1 : length(methods)
+    odraft = draft_no{mid};
+    errorbar(odraft.no, mean(odraft.thresholds), std(odraft.thresholds), "DisplayName", methods{mid}, "Color", get_colors(colors{mid}, 600), "LineWidth", 2);
+end
+% legend();
+ylabel("detectability threshold", "FontSize", 16);
+xlabel("no", "FontSize", 16);
+ylim([0,.75]);
+xlim([3, 22]);
+
+% Save figure as fig and pdf
+if SAVE
+    saveas(f, sprintf("%s/fig5b.fig", save_path));
+    print(gcf, '-dpng','-loose','-image','-r600', sprintf("%s/fig5b.png", save_path));
+    close(f);
+end
+
+%% Fig.6abcd %%
+% Parameters
+methods = {'mvgc-lwr', 'mvgc-ols', 'mvgc-lasso', 'mvgc-sbl', 'mvgc-lapsbl', 'pdc-lwr', 'pdc-ols'};
+colors = {"red", "purple", "blue", "yellow", "orange", "green", "blueGrey"};
+fig_width = 1000;
+fig_height = 1000;
+
+% Save parameters
+SAVE = true;
+save_path = sprintf('data/results/F06abcd');
+if (SAVE && ~exist(save_path, 'dir')), mkdir(save_path); end
+
+draft_abc = cell(1, length(methods));
+draft_d = cell(1, length(methods));
+timestr_abc = "202601121937";
+timestr_d = "202601221028";
+
+%%%
+function cr = tmp_fun(c, str)
+    if ~isfield(c, "stats")
+        cr = NaN;
+    else
+        eval(sprintf("cr = c.stats.%s;", str));
+    end
+end
+%%%
+
+for mid = 1 : length(methods)
+    method = methods{mid};
+
+    % Load results
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/f1s.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/no.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/runtimes.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/sim_params.mat', method, timestr_abc));
+
+    %%%
+    % load(sprintf('data/%s/%s/results.mat', method, timestr_abc));
+    %%%
+
+    draft_abc{mid} = struct();
+    draft_abc{mid}.f1s = f1s;
+    draft_abc{mid}.runtimes = runtimes;
+    draft_abc{mid}.ns = ns;
+    draft_abc{mid}.nc = nc;
+    draft_abc{mid}.no = no;
+    draft_abc{mid}.sim_params = sim_params;
+    draft_abc{mid}.exn = exn;
+
+    %%%
+    % draft_abc{mid}.f1s = cellfun(@(c) tmp_fun(c, "recall"), results);
+    % draft_abc{mid}.f1s = cellfun(@(c) tmp_fun(c, "precision"), results);
+    % draft_abc{mid}.f1s = cellfun(@(c) tmp_fun(c, "fp"), results) ./ cellfun(@(c) tmp_fun(c, "n"), results);
+    %%%
+
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/f1s.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/no_data.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/runtimes.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/no_estim.mat', method, timestr_d));
+
+    %%%
+    % load(sprintf('data/%s/%s/results.mat', method, timestr_d));
+    %%%
+
+    draft_d{mid} = struct();
+    draft_d{mid}.f1s = f1s;
+    draft_d{mid}.runtimes = runtimes;
+    draft_d{mid}.ns = ns;
+    draft_d{mid}.nc = nc;
+    draft_d{mid}.no_data = no_data;
+    draft_d{mid}.no_estim = no_estim;
+    draft_d{mid}.exn = exn;
+
+    %%%
+    % draft_d{mid}.f1s = cellfun(@(c) tmp_fun(c, "recall"), results);
+    % draft_d{mid}.f1s = cellfun(@(c) tmp_fun(c, "precision"), results);
+    % draft_d{mid}.f1s = cellfun(@(c) tmp_fun(c, "fp"), results) ./ cellfun(@(c) tmp_fun(c, "n"), results);
+    %%%
+end
+
+% Display
+f = figure();
+
+% Printing params
+set(gcf,'PaperPositionMode','auto');         
+set(gcf,'PaperOrientation','landscape');
+set(gcf, 'Position',  [1, 1, 100 + fig_width, 100 + fig_height]);   % Resize fig window
+
+tiledlayout(length(methods), 4, "TileSpacing", "tight");
+
+abc_type_indices = {[1,2], [1,4,5], [1,6,7,8]};
+abc_type_styles = {["-", "--"], ["-", "--", ":"], ["-", "--", ":", "-."]};
+abc_type_dftname = {"white", "nodedeg2", "linear"};
+
+d_type_names = {"overestimated", "adequate", "underestimated"};
+d_type_styles = ["--", "-", ":"];
+
+category_labels = {"noise type", "node degree", "network type", "order adequacy"};
+
+% A, B, C
+for mid = 1 : length(methods)
+    for cid = 1 : length(abc_type_indices)
+        ax = nexttile();
+        hold("on");
+
+        % Method label
+        if cid == 1
+            ylabel(methods{mid}, "FontSize", 14);
+        end
+
+        % Category label
+        if mid == 1
+            title(category_labels{cid}, "FontSize", 14, "FontWeight", "Normal");
+        end
+
+        cur_ind = abc_type_indices{cid};
+        cur_sty = abc_type_styles{cid};
+
+        max_nc = 0;
+
+        for iid = 1 : length(cur_ind)
+            % Extract relevant runtimes and f1s
+            f1s = squeeze(draft_abc{mid}.f1s(1, :, 1, 1, cur_ind(iid)));
+            runtime = squeeze(draft_abc{mid}.runtimes(1, :, 1, 1, cur_ind(iid)));
+            color = get_colors(colors{mid}, 700);
+
+            % Convert f1s = NaN into 0 for display
+            last_id = find(isnan(runtime), 1);
+            f1s(isnan(f1s)) = 0;
+            f1s(last_id:end) = NaN;
+
+            % Update nc counter
+            max_nc = max(max_nc, draft_abc{mid}.nc(last_id - 1));
+
+            % Parse name
+            if iid == 1
+                % Default name
+                name = abc_type_dftname{cid};
+            else
+                name = draft_abc{mid}.sim_params{cur_ind(iid)};
+            end
+    
+            % Display masked line
+            plot(draft_abc{mid}.nc, f1s, cur_sty(iid), "DisplayName", name, "LineWidth", 2, "Color", color);
+        end
+
+        xlim([0, max_nc]);
+        ylim([0, 1]);
+        % legend("Location", "southoutside");
+    end
+
+    %%% Order %%%
+    ax = nexttile();
+    hold("on");
+
+    % Category label
+    if mid == 1
+        title(category_labels{4}, "FontSize", 14, "FontWeight", "Normal");
+    end
+
+    max_nc = 0;
+
+    for iid = 1 : length(draft_d{mid}.no_data)
+        % Extract relevant runtimes and f1s
+        f1s = squeeze(draft_d{mid}.f1s(1, :, 1, 1, iid));
+        runtime = squeeze(draft_d{mid}.runtimes(1, :, 1, 1, iid));
+        color = get_colors(colors{mid}, 600);
+
+        % Convert f1s = NaN into 0 for display
+        last_id = find(isnan(runtime), 1);
+        f1s(isnan(f1s)) = 0;
+        f1s(last_id:end) = NaN;
+
+        % Update nc counter
+        max_nc = max(max_nc, draft_d{mid}.nc(last_id - 1));
+
+        % Display masked line
+        plot(draft_d{mid}.nc, f1s, d_type_styles(iid), "DisplayName", d_type_names{iid}, "LineWidth", 2, "Color", color);
+    end
+
+    xlim([0, max_nc]);
+    ylim([0, 1]);
+    % legend("Location", "southoutside");
+end
+
+% Save figure as fig and pdf
+if SAVE
+    print(gcf, '-dpng','-loose','-image','-r600', sprintf("%s/fig6.png", save_path));
+    close(f);
+end
+
+%% Fig.6abcd - runtime %%
+% Parameters
+methods = {'mvgc-lwr', 'mvgc-ols', 'mvgc-lasso', 'mvgc-sbl', 'mvgc-lapsbl', 'pdc-lwr', 'pdc-ols'};
+colors = {"red", "purple", "blue", "yellow", "orange", "green", "blueGrey"};
+fig_width = 1000;
+fig_height = 1000;
+
+% Save parameters
+SAVE = true;
+save_path = sprintf('data/results/F06abcd');
+if (SAVE && ~exist(save_path, 'dir')), mkdir(save_path); end
+
+draft_abc = cell(1, length(methods));
+draft_d = cell(1, length(methods));
+timestr_abc = "202601121937";
+timestr_d = "202601221028";
+
+for mid = 1 : length(methods)
+    method = methods{mid};
+
+    % Load results
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/f1s.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/no.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/runtimes.mat', method, timestr_abc));
+    load(sprintf('data/%s/%s/sim_params.mat', method, timestr_abc));
+
+    draft_abc{mid} = struct();
+    draft_abc{mid}.f1s = f1s;
+    draft_abc{mid}.runtimes = runtimes;
+    draft_abc{mid}.ns = ns;
+    draft_abc{mid}.nc = nc;
+    draft_abc{mid}.no = no;
+    draft_abc{mid}.sim_params = sim_params;
+    draft_abc{mid}.exn = exn;
+
+    load(sprintf('data/%s/%s/caus_est_method.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/exn.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/f1s.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/mvar_est_method.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/nc.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/no_data.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/ns.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/runtimes.mat', method, timestr_d));
+    load(sprintf('data/%s/%s/no_estim.mat', method, timestr_d));
+
+    draft_d{mid} = struct();
+    draft_d{mid}.f1s = f1s;
+    draft_d{mid}.runtimes = runtimes;
+    draft_d{mid}.ns = ns;
+    draft_d{mid}.nc = nc;
+    draft_d{mid}.no_data = no_data;
+    draft_d{mid}.no_estim = no_estim;
+    draft_d{mid}.exn = exn;
+end
+
+% Display
+f = figure();
+
+% Printing params
+set(gcf,'PaperPositionMode','auto');         
+set(gcf,'PaperOrientation','landscape');
+set(gcf, 'Position',  [1, 1, 100 + fig_width, 100 + fig_height]);   % Resize fig window
+
+tiledlayout(length(methods), 4, "TileSpacing", "tight");
+
+abc_type_indices = {[1,2,3], [1,4,5], [1,6,7,8]};
+abc_type_styles = {["-", "--", ":"], ["-", "--", ":"], ["-", "--", ":", "-."]};
+abc_type_dftname = {"white", "nodedeg2", "linear"};
+
+d_type_names = {"overestimated", "adequate", "underestimated"};
+d_type_styles = ["--", "-", ":"];
+
+category_labels = {"noise type", "node degree", "network type", "order adequacy"};
+max_ncs = [400, 400, 100, 100, 100, 100, 100];
+
+% A, B, C
+for mid = 1 : length(methods)
+    for cid = 1 : length(abc_type_indices)
+        ax = nexttile();
+        hold("on");
+
+        % Method label
+        if cid == 1
+            ylabel(methods{mid}, "FontSize", 14);
+        end
+
+        % Category label
+        if mid == 1
+            title(category_labels{cid}, "FontSize", 14, "FontWeight", "Normal");
+        end
+
+        cur_ind = abc_type_indices{cid};
+        cur_sty = abc_type_styles{cid};
+
+        for iid = 1 : length(cur_ind)
+            % Extract relevant runtimes and f1s
+            f1s = squeeze(draft_abc{mid}.f1s(1, :, 1, 1, cur_ind(iid)));
+            runtime = squeeze(draft_abc{mid}.runtimes(1, :, 1, 1, cur_ind(iid)));
+            color = get_colors(colors{mid}, 700);
+
+            % Parse name
+            if iid == 1
+                % Default name
+                name = abc_type_dftname{cid};
+            else
+                name = draft_abc{mid}.sim_params{cur_ind(iid)};
+            end
+    
+            % Display masked line
+            plot(draft_abc{mid}.nc, runtime, cur_sty(iid), "DisplayName", name, "LineWidth", 2, "Color", color);
+        end
+
+        yline(1000, "LineStyle", ":", "Color", get_colors("red"), "HandleVisibility", "off");
+        xlim([0, max_ncs(mid)]);
+        ylim([0, 1100]);
+        % legend("Location", "southoutside");
+    end
+
+    %%% Order %%%
+    ax = nexttile();
+    hold("on");
+
+    % Category label
+    if mid == 1
+        title(category_labels{4}, "FontSize", 14, "FontWeight", "Normal");
+    end
+
+    for iid = 1 : length(draft_d{mid}.no_data)
+        % Extract relevant runtimes and f1s
+        f1s = squeeze(draft_d{mid}.f1s(1, :, 1, 1, iid));
+        runtime = squeeze(draft_d{mid}.runtimes(1, :, 1, 1, iid));
+        color = get_colors(colors{mid}, 600);
+
+        % Display masked line
+        plot(draft_d{mid}.nc, runtime, d_type_styles(iid), "DisplayName", d_type_names{iid}, "LineWidth", 2, "Color", color);
+    end
+
+    yline(1000, "LineStyle", ":", "Color", get_colors("red"), "HandleVisibility", "off");
+    xlim([0, max_ncs(mid)]);
+    ylim([0, 1100]);
+    % legend("Location", "southoutside");
+end
+
+% Save figure as fig and pdf
+if SAVE
+    print(gcf, '-dpng','-loose','-image','-r600', sprintf("%s/fig6-runtime.png", save_path));
+    close(f);
 end

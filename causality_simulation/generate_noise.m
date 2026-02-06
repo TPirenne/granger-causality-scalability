@@ -39,7 +39,19 @@ function noise = generate_noise(n, m, noise_type, scaling)
         
     % Pink noise
     elseif (strcmp(noise_type, 'pink'))
-        noise = pink_noise(n, m);
+        noise = sloped_noise(n, m, -1);
+
+    % Red noise
+    elseif (strcmp(noise_type, 'red'))
+        noise = sloped_noise(n, m, -2);
+
+    % Pink noise
+    elseif (strcmp(noise_type, 'blue'))
+        noise = sloped_noise(n, m, 1);
+
+    % Pink noise
+    elseif (strcmp(noise_type, 'violet'))
+        noise = sloped_noise(n, m, 2);
         
     % None    
     else
@@ -49,9 +61,9 @@ function noise = generate_noise(n, m, noise_type, scaling)
     noise = noise * scaling;
 end
 
-function x = pink_noise(n, m)
-% Generates n sequences of m-sample-long pink noise
-    %%% Adapted from Hristo Zhivomirov (version 1.9.0.0)
+function x = sloped_noise(n, m, alpha)
+% Generates n sequences of m-sample-long sloped noise
+    %%% Adapted from Hristo Zhivomirov (version 2.0.0.0)
     % https://de.mathworks.com/matlabcentral/fileexchange/42919-pink-red-blue-and-violet-noise-generation-with-matlab
     
     x = randn(m, n); % because fft works on columns rather than rows
@@ -61,7 +73,7 @@ function x = pink_noise(n, m)
     
     X = fft(x);
     X = X(1:unique_pts, :);
-    X = X.*repmat((unique_pts_idx.^(-0.5)), 1, n);
+    X = X.*repmat((unique_pts_idx.^(0.5 * alpha)), 1, n);
     
     if mod(m, 2)
        X = cat(1, X, conj(X(end:-1:2, :)));

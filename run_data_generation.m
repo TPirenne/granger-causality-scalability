@@ -412,15 +412,16 @@ experiments(exp1);
 nt = 100;
 
 % Get current timestamp
-NOW = string(datetime('now'), 'yyyyMMddHHmm');
+% NOW = string(datetime('now'), 'yyyyMMddHHmm');
+NOW = "202408281750";
 
 % mvgc-lwr ; mvgc-ols ; pdc-lwr ; pdc-ols
 exp2 = struct();
 exp2.run = true;
 exp2.mvar_est_methods = {"lwr", "ols"};
 exp2.caus_est_methods = {"mvgc", "pdc"};
-exp2.ns = [5000];
-exp2.nc = [20];
+exp2.ns = [500];
+exp2.nc = [15];
 exp2.exn = [0.0, 0.25, 0.50, 0.75];
 exp2.no = [10];
 exp2.nt = nt;
@@ -567,3 +568,225 @@ experiments(struct("run", false), exp2);
 % exp2.timestamp = "202408281750";
 % 
 % experiments(struct("run", false), exp2);
+
+%% Fig.6abc (202601121937) - nc x simulation parameters
+% Get current timestamp
+% NOW = string(datetime('now'), 'yyyyMMddHHmm');
+NOW = "202601121937_correction";
+exp7 = struct();
+exp7.run = true;
+exp7.exn = .25;
+exp7.no = [10];
+exp7.cutoff_time_trial = 1000;
+exp7.timestamp = NOW;
+% exp7.sim_params = {"gwn", "pink", "blue", "nodedeg10", "nodedeg50", "feedback", "cos", "pow" };
+exp7.sim_params = {"cos", "pow" };
+
+% mvgc-lwr ; mvgc-ols
+exp7.mvar_est_methods = {"lwr", "ols"};
+exp7.caus_est_methods = {"mvgc"};
+exp7.ns = [10000];
+exp7.nc = [10:10:400];
+experiments([], [], [], [], [], [], exp7);
+
+% mvgc-lasso
+exp7.mvar_est_methods = {"lasso"};
+exp7.caus_est_methods = {"mvgc"};
+exp7.ns = [1000];
+exp7.nc = [5:5:400];
+experiments([], [], [], [], [], [], exp7);
+
+% mvgc-sbl
+exp7.mvar_est_methods = {"sbl"};
+exp7.caus_est_methods = {"mvgc"};
+exp7.ns = [1000];
+exp7.nc = [2:1:15, 16:2:40, 45:5:400];
+experiments([], [], [], [], [], [], exp7);
+
+% mvgc-lapsbl
+exp7.mvar_est_methods = {"lapsbl"};
+exp7.caus_est_methods = {"mvgc"};
+exp7.ns = [1000];
+exp7.nc = [2:1:30, 35:5:400];
+experiments([], [], [], [], [], [], exp7);
+
+% pdc-lwr ; pdc-ols
+exp7.mvar_est_methods = {"lwr", "ols"};
+exp7.caus_est_methods = {"pdc"};
+exp7.ns = [1000];
+exp7.nc = [2:2:40, 45:5:400];
+experiments([], [], [], [], [], [], exp7);
+
+
+%% Fig.5b1 (202601131320) - coupling strength detectability threshold wrt nc
+% Trials
+nt = 50;
+
+% Get current timestamp
+% NOW = string(datetime('now'), 'yyyyMMddHHmm');
+NOW = "202601131320";
+
+% mvgc-lwr ; mvgc-ols ; pdc-lwr ; pdc-ols
+exp2 = struct();
+exp2.run = true;
+exp2.mvar_est_methods = {"lwr", "ols"};
+exp2.caus_est_methods = {"mvgc", "pdc"};
+exp2.ns = [500];
+exp2.nc = [10, 15, 20];
+exp2.exn = [0.0];
+exp2.no = [10];
+exp2.nt = nt;
+exp2.timestamp = NOW;
+
+experiments(struct("run", false), exp2);
+
+% mvgc-lasso
+exp2.mvar_est_methods = {"lasso"};
+exp2.caus_est_methods = {"mvgc"};
+
+experiments(struct("run", false), exp2);
+
+% mvgc-sbl ; mvgc-lapsbl
+exp2 = struct();
+exp2.run = true;
+exp2.mvar_est_methods = {"sbl", "lapsbl"};
+exp2.caus_est_methods = {"mvgc"};
+exp2.ns = [500];
+exp2.nc = [8, 10, 12];
+exp2.exn = [0.0];
+exp2.no = [10];
+exp2.nt = nt;
+exp2.timestamp = NOW;
+
+experiments(struct("run", false), exp2);
+
+%% Fig.5b2 (202601132832) - coupling strength detectability threshold wrt ns
+% Trials
+nt = 50;
+
+% Get current timestamp
+% NOW = string(datetime('now'), 'yyyyMMddHHmm');
+NOW = "202601132832";
+
+% mvgc-lwr ; mvgc-ols ; pdc-lwr ; pdc-ols
+exp2 = struct();
+exp2.run = true;
+exp2.mvar_est_methods = {"lwr", "ols"};
+exp2.caus_est_methods = {"mvgc", "pdc"};
+exp2.ns = [500, 1000, 5000];
+exp2.nc = [15];
+exp2.exn = [0.0];
+exp2.no = [10];
+exp2.nt = nt;
+exp2.timestamp = NOW;
+
+experiments(struct("run", false), exp2);
+
+% mvgc-lasso
+exp2.mvar_est_methods = {"lasso"};
+exp2.caus_est_methods = {"mvgc"};
+
+experiments(struct("run", false), exp2);
+
+% mvgc-sbl ; mvgc-lapsbl
+exp2 = struct();
+exp2.run = true;
+exp2.mvar_est_methods = {"sbl", "lapsbl"};
+exp2.caus_est_methods = {"mvgc"};
+exp2.ns = [300, 400, 500];
+exp2.nc = [10];
+exp2.exn = [0.0];
+exp2.no = [10];
+exp2.nt = nt;
+exp2.timestamp = NOW;
+
+experiments(struct("run", false), exp2);
+
+%% Fig.5b3 (202601133034) - coupling strength detectability threshold wrt no
+% Trials
+nt = 50;
+
+% Get current timestamp
+% NOW = string(datetime('now'), 'yyyyMMddHHmm');
+NOW = "202601133034";
+
+% mvgc-lwr ; mvgc-ols ; pdc-lwr ; pdc-ols
+exp2 = struct();
+exp2.run = true;
+exp2.mvar_est_methods = {"lwr", "ols"};
+exp2.caus_est_methods = {"mvgc", "pdc"};
+exp2.ns = [500];
+exp2.nc = [15];
+exp2.exn = [0.0];
+exp2.no = [5, 10, 20];
+exp2.nt = nt;
+exp2.timestamp = NOW;
+
+experiments(struct("run", false), exp2);
+
+% mvgc-lasso
+exp2.mvar_est_methods = {"lasso"};
+exp2.caus_est_methods = {"mvgc"};
+
+experiments(struct("run", false), exp2);
+
+% mvgc-sbl ; mvgc-lapsbl
+exp2 = struct();
+exp2.run = true;
+exp2.mvar_est_methods = {"sbl", "lapsbl"};
+exp2.caus_est_methods = {"mvgc"};
+exp2.ns = [500];
+exp2.nc = [10];
+exp2.exn = [0.0];
+exp2.no = [5, 10, 20];
+exp2.nt = nt;
+exp2.timestamp = NOW;
+
+experiments(struct("run", false), exp2);
+
+%% Fig.6d (202601221028) - mismatched order
+% Get current timestamp
+% NOW = string(datetime('now'), 'yyyyMMddHHmm');
+NOW = "202601221028";
+exp8 = struct();
+exp8.run = true;
+exp8.exn = .25;
+exp8.no_data = [5, 10, 20];
+exp8.no_estim = [10];
+exp8.cutoff_time_trial = 1000;
+exp8.timestamp = NOW;
+
+% mvgc-lwr ; mvgc-ols
+exp8.mvar_est_methods = {"lwr", "ols"};
+exp8.caus_est_methods = {"mvgc"};
+exp8.ns = [10000];
+exp8.nc = [10:10:400];
+experiments([], [], [], [], [], [], [], exp8);
+
+% mvgc-lasso
+exp8.mvar_est_methods = {"lasso"};
+exp8.caus_est_methods = {"mvgc"};
+exp8.ns = [1000];
+exp8.nc = [5:5:400];
+experiments([], [], [], [], [], [], [], exp8);
+
+% mvgc-sbl
+exp8.mvar_est_methods = {"sbl"};
+exp8.caus_est_methods = {"mvgc"};
+exp8.ns = [1000];
+exp8.nc = [2:1:15, 16:2:40, 45:5:400];
+experiments([], [], [], [], [], [], [], exp8);
+
+% mvgc-lapsbl
+exp8.mvar_est_methods = {"lapsbl"};
+exp8.caus_est_methods = {"mvgc"};
+exp8.ns = [1000];
+exp8.nc = [2:1:30, 35:5:400];
+experiments([], [], [], [], [], [], [], exp8);
+
+% pdc-lwr ; pdc-ols
+exp8.mvar_est_methods = {"lwr", "ols"};
+exp8.caus_est_methods = {"pdc"};
+exp8.ns = [1000];
+exp8.nc = [2:2:40, 45:5:400];
+experiments([], [], [], [], [], [], [], exp8);

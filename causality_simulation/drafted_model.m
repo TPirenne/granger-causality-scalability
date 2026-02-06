@@ -1,4 +1,4 @@
-function [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weights, external_noise, internal_noise)
+function [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weights, external_noise, internal_noise, noise_type, caus_profile)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DRAFTED_MODEL
 %   Generates time series n_samples-long (assumed 1000Hz sampling rate)
@@ -32,7 +32,6 @@ function [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weigh
 % TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE       %
 % SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
     % For stabilisation purposes, crop first samples needed for all the ts
     % to have causality
     prefix = max(max(draft_delays));
@@ -41,13 +40,22 @@ function [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weigh
     % Parameters
     n_sources = size(draft_delays, 1);
     
-    if ~exist('external_noise', 'var')
+    if ~exist('external_noise', 'var') || isempty(external_noise)
         external_noise = 0.0;
     end
-    
+
+    if ~exist('noisetype', 'var') || isempty(noisetype)
+        noise_type = 'gwn';
+    end
+
     % Model
     tss = generate_noise(n_sources, n_samples, 'gwn', 1);
     
+    % Create counter for reset
+    if strcmpi(caus_profile, "feedback") || strcmpi(caus_profile, "pow") || strcmpi(caus_profile, "cos")
+        reset_counter = zeros(n_sources, 1);
+    end
+
     % Create causality
     for tid = 1 : n_samples
         for sid = 1 : n_sources
@@ -63,26 +71,56 @@ function [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weigh
             end
 
             % If internal_noise was not specified, use leftover weight
-            if ~exist('internal_noise', 'var')
+            if ~exist('internal_noise', 'var') || isempty(internal_noise)
                 internal_noise = (1 - abs(sum(weights)));
             end
 
             % First weight tss by internal noise
             new_tp = internal_noise * tss(sid, tid);
 
-            % Add causal contributions
-            for iid = 1 : length(caus_ids)
-                new_tp = new_tp + weights(iid) * tss_delay(tss, caus_ids(iid), tid, delays(iid));
+            % If reset counter is set, do not add causal contributions
+            if (strcmpi(caus_profile, "feedback") || strcmpi(caus_profile, "pow") || strcmpi(caus_profile, "cos"))
+                if reset_counter(sid) > 0
+                    reset_counter(sid) = reset_counter(sid) - 1;
+                    tss(sid, tid) = new_tp;
+                    continue;
+                end
             end
 
-            % Set new time point into return matrix
-            tss(sid, tid) = new_tp;
+            % Add causal contributions
+            for iid = 1 : length(caus_ids)
+                % Non linear (pow 2) causalities
+                if strcmpi(caus_profile, "pow")
+                    new_tp = new_tp + weights(iid) * (tss_delay(tss, caus_ids(iid), tid, delays(iid))) ^2;
+
+                % Non linear (cos .5 pi) causalities
+                elseif strcmpi(caus_profile, "cos")
+                    new_tp = new_tp + weights(iid) * cos(.5 * pi * tss_delay(tss, caus_ids(iid), tid, delays(iid)));
+                    
+                % Non linear causalities (with feedback)
+                elseif strcmpi(caus_profile, "feedback")
+                    new_tp = new_tp + weights(iid) * tss_delay(tss, caus_ids(iid), tid, delays(iid));
+
+                % Linear causalities
+                else
+                    new_tp = new_tp + weights(iid) * tss_delay(tss, caus_ids(iid), tid, delays(iid));
+                end
+            end
+
+            % Reset if saturated time point
+            if (strcmpi(caus_profile, "feedback") || strcmpi(caus_profile, "pow") || strcmpi(caus_profile, "cos")) && abs(new_tp) > 5
+                reset_counter(sid) = 10;
+                tss(sid, tid) = internal_noise * tss(sid, tid);
+            else
+                % Set new time point into return matrix
+                tss(sid, tid) = new_tp;
+            end
         end
     end
     
     % Add external noise to the resulting time series
     if external_noise ~= 0
-        tss = (1 - external_noise) * tss + generate_noise(n_sources, n_samples, 'gwn', external_noise);
+        tss = (1 - external_noise) * tss + generate_noise(n_sources, n_samples, noise_type, external_noise);
     end
 
     % Remove prefix

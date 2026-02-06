@@ -1,4 +1,4 @@
-function [tss, caus_matrix, info] = draft_data(n_samples, n_sources, external_noise, maxdelay, seed)
+function [tss, caus_matrix, info] = draft_data(n_samples, n_sources, external_noise, maxdelay, seed, noise_type, node_degree, caus_profile)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DRAFT_DATA
 %   Generates time series n_samples-long (assumed 1000Hz sampling rate)
@@ -29,15 +29,32 @@ function [tss, caus_matrix, info] = draft_data(n_samples, n_sources, external_no
 % SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Set seed if needed
-    if exist("seed", "var"), rng(seed); end
+    if exist("seed", "var") && ~isempty(seed), rng(seed); end
+
+    % Parse
+    if ~exist("node_degree", "var") || isempty(node_degree)
+        node_degree = 2;
+    end
+
+    if ~exist("caus_profile", "var") || isempty(caus_profile)
+        caus_profile = "";
+    end
+
+    if ~exist("noise_type", "var") || isempty(noise_type)
+        noise_type = "gwn";
+    end
 
     % Select connections randomly and remove diag (auto-caus)
-    caus_per_chan = 2;
-    selected_proportion = min(caus_per_chan * 2 / n_sources, 0.5);    % * 2 because tril removes half connections
+    selected_proportion = min(node_degree * 2 / n_sources, 0.5);    % * 2 because tril removes half connections
     rand_selected = (rand(n_sources) < selected_proportion) & ~diag(ones(n_sources, 1));
 
     % Remove all tril connections to make acyclic causality
     rand_selected(logical(tril(ones(n_sources)))) = false;
+
+    % If specified, force feedback on all causalities
+    if strcmpi(caus_profile, "feedback")
+        rand_selected = rand_selected | rand_selected';
+    end
 
     % Get random delays for selected connections
     draft_delays = randi(maxdelay, n_sources, n_sources);
@@ -58,5 +75,5 @@ function [tss, caus_matrix, info] = draft_data(n_samples, n_sources, external_no
     info.draft_weights = draft_weights;
     info.maxdelay = maxdelay;
     
-    [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weights, external_noise);
+    [tss, caus_matrix] = drafted_model(n_samples, draft_delays, draft_weights, external_noise, [], noise_type, caus_profile);
 end

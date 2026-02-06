@@ -74,6 +74,7 @@ function stats = stats_cm(cm, gt)
     stats.precision = tp / predp;   % positive predictive value
     stats.recall = tp / p;          % true positive rate
     stats.specificity = tn / n;     % true negative rate
+    stats.fpr = fp / n;             % false positive rate
     stats.f1 = (2 * stats.precision * stats.recall) / ( stats.precision + stats.recall );
     stats.balanced_accuracy = ( (tp / p) + (tn / n) ) / 2;
 end
