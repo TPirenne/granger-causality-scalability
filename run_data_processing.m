@@ -61,7 +61,7 @@ for mid = 1 : length(methods)
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.nt = nt;
     draft{mid}.exn = exn;
@@ -145,7 +145,7 @@ for mid = 1 : length(methods)
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.exn = exn;
 end
@@ -419,7 +419,7 @@ for mid = 1 : length(methods)
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.exn = exn;
 end
@@ -615,7 +615,7 @@ for mid = 1 : length(methods)
     draft{mid}.runtimes = runtimes;
     draft{mid}.results = results;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.nt = nt;
     draft{mid}.exn = exn;
@@ -776,7 +776,7 @@ for mid = 1 : length(methods)
     draft{mid}.runtimes = runtimes;
     draft{mid}.results = results;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.nt = nt;
     draft{mid}.exn = exn;
@@ -926,7 +926,7 @@ for mid = 1 : length(methods)
     draft{mid}.runtimes = runtimes;
     draft{mid}.results = results;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.nt = nt;
     draft{mid}.exn = exn;
@@ -1153,7 +1153,7 @@ for mid = 1 : length(methods)
     draft{mid}.f1s = f1s;
     draft{mid}.runtimes = runtimes;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.nt = nt;
     draft{mid}.exn = exn;
@@ -1801,7 +1801,7 @@ for mid = 1 : length(methods)
     draft{mid}.tn = tn;
     draft{mid}.weights = weights;
     draft{mid}.ns = ns;
-    draft{mid}.nc = nc;
+    draft{mid}.nc = ncs;
     draft{mid}.no = no;
     draft{mid}.nt = nt;
     draft{mid}.exn = exn;
@@ -2053,7 +2053,7 @@ for mid = 1 : length(methods)
     draft_nc{mid}.tn = tn;
     draft_nc{mid}.weights = weights;
     draft_nc{mid}.ns = ns;
-    draft_nc{mid}.nc = nc;
+    draft_nc{mid}.nc = ncs;
     draft_nc{mid}.no = no;
     draft_nc{mid}.nt = nt;
     draft_nc{mid}.exn = exn;
@@ -2114,7 +2114,7 @@ for mid = 1 : length(methods)
     draft_ns{mid}.tn = tn;
     draft_ns{mid}.weights = weights;
     draft_ns{mid}.ns = ns;
-    draft_ns{mid}.nc = nc;
+    draft_ns{mid}.nc = ncs;
     draft_ns{mid}.no = no;
     draft_ns{mid}.nt = nt;
     draft_ns{mid}.exn = exn;
@@ -2175,7 +2175,7 @@ for mid = 1 : length(methods)
     draft_no{mid}.tn = tn;
     draft_no{mid}.weights = weights;
     draft_no{mid}.ns = ns;
-    draft_no{mid}.nc = nc;
+    draft_no{mid}.nc = ncs;
     draft_no{mid}.no = no;
     draft_no{mid}.nt = nt;
     draft_no{mid}.exn = exn;
@@ -2313,7 +2313,7 @@ for mid = 1 : length(methods)
     draft_abc{mid}.f1s = f1s;
     draft_abc{mid}.runtimes = runtimes;
     draft_abc{mid}.ns = ns;
-    draft_abc{mid}.nc = nc;
+    draft_abc{mid}.nc = ncs;
     draft_abc{mid}.no = no;
     draft_abc{mid}.sim_params = sim_params;
     draft_abc{mid}.exn = exn;
@@ -2342,7 +2342,7 @@ for mid = 1 : length(methods)
     draft_d{mid}.f1s = f1s;
     draft_d{mid}.runtimes = runtimes;
     draft_d{mid}.ns = ns;
-    draft_d{mid}.nc = nc;
+    draft_d{mid}.nc = ncs;
     draft_d{mid}.no_data = no_data;
     draft_d{mid}.no_estim = no_estim;
     draft_d{mid}.exn = exn;
@@ -2500,7 +2500,7 @@ for mid = 1 : length(methods)
     draft_abc{mid}.f1s = f1s;
     draft_abc{mid}.runtimes = runtimes;
     draft_abc{mid}.ns = ns;
-    draft_abc{mid}.nc = nc;
+    draft_abc{mid}.nc = ncs;
     draft_abc{mid}.no = no;
     draft_abc{mid}.sim_params = sim_params;
     draft_abc{mid}.exn = exn;
@@ -2519,7 +2519,7 @@ for mid = 1 : length(methods)
     draft_d{mid}.f1s = f1s;
     draft_d{mid}.runtimes = runtimes;
     draft_d{mid}.ns = ns;
-    draft_d{mid}.nc = nc;
+    draft_d{mid}.nc = ncs;
     draft_d{mid}.no_data = no_data;
     draft_d{mid}.no_estim = no_estim;
     draft_d{mid}.exn = exn;
@@ -2607,7 +2607,7 @@ for mid = 1 : length(methods)
         plot(draft_d{mid}.nc, runtime, d_type_styles(iid), "DisplayName", d_type_names{iid}, "LineWidth", 2, "Color", color);
     end
 
-    yline(1000, "LineStyle", ":", "Color", get_colors("red"), "HandleVisibility", "off");
+    yline(1000, "LineStyle", ":", "Color", get_colors("pink"), "HandleVisibility", "off");
     xlim([0, max_ncs(mid)]);
     ylim([0, 1100]);
     % legend("Location", "southoutside");
@@ -2618,3 +2618,295 @@ if SAVE
     print(gcf, '-dpng','-loose','-image','-r600', sprintf("%s/fig6-runtime.png", save_path));
     close(f);
 end
+
+%% Fig.7a - tests sparseMVGC wrt N %%
+%%% MVGC vs sMVGC wrt N %%%%%%%%%%%%%%%%
+% Parameters
+nt = 5;
+ns = 10000;
+order = 10;
+external_noise = 0.0;
+
+ncs = [10:10:500];
+prior_degrees = [50, 100, 150, 200];
+
+threshold_runtime = 1200;
+
+% Containers
+runtimes = nan(length(prior_degrees) + 1, length(ncs), nt);
+f1s = nan(length(prior_degrees) + 1, length(ncs), nt);
+recall = nan(length(prior_degrees) + 1, length(ncs), nt);
+precision = nan(length(prior_degrees) + 1, length(ncs), nt);
+
+for tid = 1 : nt
+    % Reset timeout counter for each trial
+    timeout = false(length(prior_degrees) + 1, 1);
+
+    for cid = 1 : length(ncs)
+        fprintf("### trial %d/%d -- nc = %d ###\n", tid, nt, ncs(cid));
+        nc = ncs(cid);
+    
+        % Generate data
+        [data, gt, ~] = draft_data(ns, nc, external_noise, order);
+    
+        % MVGC
+        if ~timeout(1)
+            info = struct();
+            info.est_method =  "ols";
+            info.order = order;
+            
+            tic();
+            [cm, info] = mvgc(data, info);
+            
+            runtimes(1, cid, tid) = toc();
+            stats = stats_cm(cm, gt);
+            f1s(1, cid, tid) = stats.f1;
+            recall(1, cid, tid) = stats.recall;
+            precision(1, cid, tid) = stats.precision;
+
+            if runtimes(1, cid, tid) > threshold_runtime
+                timeout(1) = true;
+            end
+        end
+    
+        % sMVGC
+        for pid = 1 : length(prior_degrees)
+            if ~timeout(pid + 1)
+                % Prior
+                prior = rand(nc, nc) < (prior_degrees(pid) / nc);
+                prior = prior | (gt == 1);
+        
+                info = struct();
+                info.est_method =  "ols";
+                info.order = order;
+                info.prior = prior;
+                
+                tic();
+                [cm, info] = smvgc(data, info);
+                
+                runtimes(pid + 1, cid, tid) = toc();
+                stats = stats_cm(cm, gt);
+                f1s(pid + 1, cid, tid) = stats.f1;
+                recall(pid + 1, cid, tid) = stats.recall;
+                precision(pid + 1, cid, tid) = stats.precision;
+
+                if runtimes(pid + 1, cid, tid) > threshold_runtime
+                    timeout(pid + 1) = true;
+                end
+            end
+        end
+    end
+end
+
+% Save %
+save_path = sprintf('data/results/F07a');
+if ~exist(save_path, 'dir'), mkdir(save_path); end
+
+save(sprintf("%s/runtimes.mat", save_path), 'runtimes', '-v7.3');
+save(sprintf("%s/f1s.mat", save_path), 'f1s', '-v7.3');
+save(sprintf("%s/recall.mat", save_path), 'recall', '-v7.3');
+save(sprintf("%s/precision.mat", save_path), 'precision', '-v7.3');
+
+save(sprintf("%s/ncs.mat", save_path), 'ncs', '-v7.3');
+save(sprintf("%s/prior_degrees.mat", save_path), 'prior_degrees', '-v7.3');
+save(sprintf("%s/ns.mat", save_path), 'ns', '-v7.3');
+save(sprintf("%s/order.mat", save_path), 'order', '-v7.3');
+save(sprintf("%s/external_noise.mat", save_path), 'external_noise', '-v7.3');
+
+%%% Display %%%
+% Visual process
+runtimes_avg = squeeze(mean(runtimes, 3, "omitnan"));
+runtimes_std = squeeze(std(runtimes, [], 3, "omitnan"));
+f1s_avg = squeeze(mean(f1s, 3, "omitnan"));
+
+% Display
+f = figure();
+ax = gca(f);
+fig_width = 800;
+fig_height = 400;
+
+% Printing params
+set(gcf,'PaperPositionMode','auto');
+set(gcf,'PaperOrientation','landscape');
+set(gcf, 'Position',  [1, 1, 100 + fig_width, 100 + fig_height]);
+
+% Axes
+xlabel("nc", "FontSize", 16);
+ylabel("computation time (s)", "FontSize", 16);
+hold("on");
+
+% STD %
+display_std(ax, ncs, runtimes_std(1, :), runtimes_avg(1, :), get_colors("pink", 500));
+
+for pid = 1 : length(prior_degrees)
+    display_std(ax, ncs, runtimes_std(pid + 1, :), runtimes_avg(pid + 1, :), get_colors("blue", 300 + (100 * pid)));
+end
+
+% AVG %
+plot(ncs, runtimes_avg(1, :), "DisplayName", "MVGC", "Marker", ".", "MarkerSize", 15, "LineWidth", 2, "Color", get_colors("pink", 500));
+
+for pid = 1 : length(prior_degrees)
+    plot(ncs, runtimes_avg(pid + 1, :), "DisplayName", sprintf("sMVGC (degree = %d)", prior_degrees(pid)), "Marker", ".", "MarkerSize", 15, "LineWidth", 2, "Color", get_colors("blue", 300 + (100 * pid)));
+end
+
+% F1s %
+display_cmapped_scatter(ax, ncs, runtimes_avg(1, :), f1s_avg(1, :), "pink");
+for pid = 1 : length(prior_degrees)
+    display_cmapped_scatter(ax, ncs, runtimes_avg(pid + 1, :), f1s_avg(pid + 1, :), "blue");
+end
+
+% Link to fig7b %
+xline(200, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 400));
+xline(300, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 600));
+
+% Limits
+ylim([0, 1100]);
+xlim([50, 350]);
+
+% Font
+ax.FontSize = 14;
+
+legend("AutoUpdate", "off", "Location", "northwest");
+
+% Save figure
+print(f, '-dpng','-loose','-image','-r600', sprintf("%s/fig7a.png", save_path));
+close(f);
+
+%% Fig.7b - tests sparseMVGC wrt d %%
+%%% MVGC vs sMVGC wrt N %%%%%%%%%%%%%%%%
+% Parameters
+nt = 5;
+ns = 10000;
+order = 10;
+external_noise = 0.0;
+
+ncs = [200, 300, 400];
+prior_degrees = 5:10:400;
+
+threshold_runtime = 1200;
+
+% Containers
+runtimes = nan(length(prior_degrees), length(ncs), nt);
+f1s = nan(length(prior_degrees), length(ncs), nt);
+recall = nan(length(prior_degrees), length(ncs), nt);
+precision = nan(length(prior_degrees), length(ncs), nt);
+mvgc_results = struct();
+
+for tid = 1 : nt
+    for cid = 1 : length(ncs)
+        nc = ncs(cid);
+
+        % Generate data
+        [data, gt, ~] = draft_data(ns, nc, external_noise, order);
+    
+        % Log
+        fprintf("### trial %d/%d -- MVGC ###\n", tid, nt);
+    
+        % MVGC
+        info = struct();
+        info.est_method =  "ols";
+        info.order = order;
+        
+        tic();
+        [cm, info] = mvgc(data, info);
+        
+        mvgc_results(cid).runtime(tid) = toc();
+        stats = stats_cm(cm, gt);
+        mvgc_results(cid).f1s(tid) = stats.f1;
+        mvgc_results(cid).recall(tid) = stats.recall;
+        mvgc_results(cid).precision(tid) = stats.precision;
+        
+        % sMVGC
+        for pid = 1 : length(prior_degrees)
+            % Log
+            fprintf("### trial %d/%d -- sMVGC nc = %d ; degree = %d ###\n", tid, nt, nc, prior_degrees(pid));
+    
+            % Prior
+            prior = rand(nc, nc) < (prior_degrees(pid) / nc);
+            prior = prior | (gt == 1);
+    
+            info = struct();
+            info.est_method =  "ols";
+            info.order = order;
+            info.prior = prior;
+            
+            tic();
+            [cm, info] = smvgc(data, info);
+            
+            runtimes(pid, cid, tid) = toc();
+            stats = stats_cm(cm, gt);
+            f1s(pid, cid, tid) = stats.f1;
+            recall(pid, cid, tid) = stats.recall;
+            precision(pid, cid, tid) = stats.precision;
+    
+            if runtimes(pid, cid, tid) > threshold_runtime
+                break;
+            end
+        end
+    end
+end
+
+% Save %
+save_path = sprintf('data/results/F07b');
+if ~exist(save_path, 'dir'), mkdir(save_path); end
+
+save(sprintf("%s/runtimes.mat", save_path), 'runtimes', '-v7.3');
+save(sprintf("%s/f1s.mat", save_path), 'f1s', '-v7.3');
+save(sprintf("%s/recall.mat", save_path), 'recall', '-v7.3');
+save(sprintf("%s/precision.mat", save_path), 'precision', '-v7.3');
+save(sprintf("%s/mvgc_results.mat", save_path), 'mvgc_results', '-v7.3');
+
+save(sprintf("%s/ncs.mat", save_path), 'ncs', '-v7.3');
+save(sprintf("%s/prior_degrees.mat", save_path), 'prior_degrees', '-v7.3');
+save(sprintf("%s/ns.mat", save_path), 'ns', '-v7.3');
+save(sprintf("%s/order.mat", save_path), 'order', '-v7.3');
+save(sprintf("%s/external_noise.mat", save_path), 'external_noise', '-v7.3');
+
+%%% Display %%%
+f = figure();
+ax = gca(f);
+fig_width = 800;
+fig_height = 400;
+
+% Printing params
+set(gcf,'PaperPositionMode','auto');
+set(gcf,'PaperOrientation','landscape');
+set(gcf, 'Position',  [1, 1, 100 + fig_width, 100 + fig_height]);
+
+% Axes
+xlabel("degree (d)", "FontSize", 16);
+ylabel("computation time (s)", "FontSize", 16);
+hold("on");
+
+% plot %
+for cid = 1 : length(ncs)
+    % Visual process
+    runtimes_avg = squeeze(mean(runtimes(:, cid, :), 3, "omitnan"));
+    runtimes_std = squeeze(std(runtimes(:, cid, :), [], 3, "omitnan"));
+    f1s_avg = squeeze(mean(f1s(:, cid, :), 3, "omitnan"));
+
+    % Plot
+    display_std(ax, prior_degrees, runtimes_std, runtimes_avg, get_colors("blue", 100 + (200 * cid)));
+    plot(prior_degrees, runtimes_avg, "DisplayName", sprintf("sMVGC (nc = %d)", ncs(cid)), "Marker", ".", "MarkerSize", 15, "LineWidth", 2, "Color", get_colors("blue", 100 + (200 * cid)));
+    display_cmapped_scatter(ax, prior_degrees, runtimes_avg, f1s_avg, "blue");
+end
+
+for cid = 1 : length(ncs)
+    if ncs(cid) < 400
+        h = yline(mean(mvgc_results(cid).runtime), "LineStyle", "--",  'DisplayName', sprintf("MVGC (nc = %d)", ncs(cid)), "LineWidth", 2, "Color", get_colors("pink", 100 + (300 * cid)));
+        uistack(h, 'bottom');
+    end
+end
+
+% Limits
+ylim([0, 1100]);
+xlim([0, 350]);
+
+% Font
+ax.FontSize = 14;
+
+legend("AutoUpdate", "off", "Location", "northwest");
+
+% Save figure
+print(f, '-dpng','-loose','-image','-r600', sprintf("%s/fig7b.png", save_path));
+close(f);
