@@ -2722,7 +2722,7 @@ f1s_avg = squeeze(mean(f1s, 3, "omitnan"));
 % Display
 f = figure();
 ax = gca(f);
-fig_width = 800;
+fig_width = 600;
 fig_height = 400;
 
 % Printing params
@@ -2756,8 +2756,9 @@ for pid = 1 : length(prior_degrees)
 end
 
 % Link to fig7b %
-xline(200, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 400));
-xline(300, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 600));
+xline(100, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 100));
+xline(200, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 500));
+xline(300, "LineStyle", "--",  'HandleVisibility', 'off', "LineWidth", 2, "Color", get_colors("pink", 900));
 
 % Limits
 ylim([0, 1100]);
@@ -2780,7 +2781,7 @@ ns = 10000;
 order = 10;
 external_noise = 0.0;
 
-ncs = [200, 300, 400];
+ncs = [100, 200, 300];
 prior_degrees = 5:10:400;
 
 threshold_runtime = 1200;
@@ -2865,7 +2866,7 @@ save(sprintf("%s/external_noise.mat", save_path), 'external_noise', '-v7.3');
 %%% Display %%%
 f = figure();
 ax = gca(f);
-fig_width = 800;
+fig_width = 600;
 fig_height = 400;
 
 % Printing params
@@ -2893,8 +2894,7 @@ end
 
 for cid = 1 : length(ncs)
     if ncs(cid) < 400
-        h = yline(mean(mvgc_results(cid).runtime), "LineStyle", "--",  'DisplayName', sprintf("MVGC (nc = %d)", ncs(cid)), "LineWidth", 2, "Color", get_colors("pink", 100 + (300 * cid)));
-        uistack(h, 'bottom');
+        h = yline(mean(mvgc_results(cid).runtime), "LineStyle", "--",  'DisplayName', sprintf("MVGC (nc = %d)", ncs(cid)), "LineWidth", 2, "Color", get_colors("pink", 100 + (400 * (cid - 1))));
     end
 end
 
